@@ -2,7 +2,13 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 import pickle
 import numpy as np
+import logging
 
+logging.basicConfig(
+    filename="logs/api_logs.log",
+    level=logging.INFO,
+    format="%(asctime)s - %(message)s"
+)
 app = FastAPI()
 
 # Load model
@@ -37,8 +43,14 @@ def predict(data: IrisInput):
     ]).reshape(1, -1)
 
     prediction = model.predict(features)
+    pred_class = int(prediction[0])
+
+    # LOGGING
+    logging.info(
+        f"Input: {data.dict()} | Prediction: {pred_class}"
+    )
 
     return {
-        "prediction": int(prediction[0]),
-        "class_name": label_map[int(prediction[0])]
+        "prediction": pred_class,
+        "class_name": label_map[pred_class]
     }
