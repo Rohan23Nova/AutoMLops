@@ -5,7 +5,7 @@ import numpy as np
 import logging
 import mlflow
 from main_pipeline import run_pipeline
-
+import threading
 mlflow.set_experiment("AutoMLOps_Inference")
 
 logging.basicConfig(
@@ -61,5 +61,7 @@ def predict(data: IrisInput):
     }
 @app.post("/retrain")
 def retrain():
-    run_pipeline()
-    return {"message": "Model retrained successfully"}
+    thread = threading.Thread(target=run_pipeline)
+    thread.start()
+
+    return {"message": "Retraining started in background"}
