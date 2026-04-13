@@ -6,6 +6,9 @@ import logging
 import mlflow
 from main_pipeline import run_pipeline
 import threading
+from fastapi.middleware.cors import CORSMiddleware
+
+
 mlflow.set_experiment("AutoMLOps_Inference")
 
 logging.basicConfig(
@@ -14,6 +17,13 @@ logging.basicConfig(
     format="%(asctime)s - %(message)s"
 )
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Load model
 with open("models/best_model.pkl", "rb") as f:
