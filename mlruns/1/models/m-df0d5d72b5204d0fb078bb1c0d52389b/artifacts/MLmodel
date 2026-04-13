@@ -1,0 +1,23 @@
+artifact_path: /Users/rohankumar/Desktop/AutoMLOps_Project/mlruns/1/models/m-df0d5d72b5204d0fb078bb1c0d52389b/artifacts
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.pkl
+    predict_fn: predict
+    python_version: 3.12.0
+  sklearn:
+    code: null
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 1.7.2
+    skops_trusted_types: null
+mlflow_version: 3.9.0
+model_id: m-df0d5d72b5204d0fb078bb1c0d52389b
+model_size_bytes: 1000
+model_uuid: m-df0d5d72b5204d0fb078bb1c0d52389b
+prompts: null
+run_id: b9c655db2122488a8856e7a597bc812c
+utc_time_created: '2026-02-18 09:47:33.941886'
