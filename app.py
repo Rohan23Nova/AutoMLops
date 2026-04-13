@@ -3,6 +3,9 @@ from pydantic import BaseModel
 import pickle
 import numpy as np
 import logging
+import mlflow
+
+mlflow.set_experiment("AutoMLOps_Inference")
 
 logging.basicConfig(
     filename="logs/api_logs.log",
@@ -42,13 +45,14 @@ def predict(data: IrisInput):
         data.petal_width
     ]).reshape(1, -1)
 
-    prediction = model.predict(features)
-    pred_class = int(prediction[0])
+    with mlflow.start_run():
+        prediction = model.predict(features)
+        pred_class = int(prediction[0])
 
-    # LOGGING
-    logging.info(
-        f"Input: {data.dict()} | Prediction: {pred_class}"
-    )
+        mlflow.log_param("input", str(data.dict()))
+        mlflow.log_metric("prediction", pred_class)
+
+    logging.info(f"Input: {data.dict()} | Prediction: {pred_class}")
 
     return {
         "prediction": pred_class,
