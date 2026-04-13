@@ -4,6 +4,7 @@ import pickle
 import numpy as np
 import logging
 import mlflow
+from main_pipeline import run_pipeline
 
 mlflow.set_experiment("AutoMLOps_Inference")
 
@@ -58,3 +59,7 @@ def predict(data: IrisInput):
         "prediction": pred_class,
         "class_name": label_map[pred_class]
     }
+@app.post("/retrain")
+def retrain():
+    run_pipeline()
+    return {"message": "Model retrained successfully"}
