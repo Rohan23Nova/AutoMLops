@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+import json
 from pydantic import BaseModel
 import pickle
 import numpy as np
@@ -75,3 +76,17 @@ def retrain():
     thread.start()
 
     return {"message": "Retraining started in background"}
+@app.post("/check-drift")
+def check_drift():
+    from main_pipeline import check_and_retrain
+
+    check_and_retrain()
+    return {"message": "Drift check completed"}
+@app.get("/logs")
+def get_logs():
+    try:
+        with open("logs/monitoring_log.json", "r") as f:
+            data = json.load(f)
+        return data
+    except:
+        return []

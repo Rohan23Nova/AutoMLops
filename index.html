@@ -3,26 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Premium Iris Classification ML API Interface">
-    <title>Iris Classification Workspace</title>
+    <title>Iris Classification | Model Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
+        /* Modern, Vercel/Linear-inspired SaaS Theme */
         :root {
-            --bg-base: #030305;
-            --card-bg: rgba(18, 18, 20, 0.65);
-            --border-glow: rgba(255, 255, 255, 0.08);
-            --text-primary: #ffffff;
-            --text-secondary: #a1a1aa;
-            --input-bg: rgba(255, 255, 255, 0.03);
-            --input-border: rgba(255, 255, 255, 0.08);
-            --input-focus-border: #6366f1;
-            --primary: #6366f1;
-            --primary-hover: #4f46e5;
-            --primary-glow: rgba(99, 102, 241, 0.5);
-            --error: #f87171;
-            --success: #34d399;
+            --bg: #000000;
+            --surface: #0a0a0a;
+            --surface-hover: #111111;
+            --border: #222222;
+            --border-hover: #333333;
+            --text-primary: #ededed;
+            --text-secondary: #888888;
+            --primary: #ffffff;
+            --primary-invert: #000000;
+            --accent: #3b82f6; 
+            --success: #10b981;
+            --error: #ef4444;
+            --font-sans: 'Inter', -apple-system, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
         }
 
         * {
@@ -32,418 +33,442 @@
         }
 
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--bg-base);
+            font-family: var(--font-sans);
+            background-color: var(--bg);
             color: var(--text-primary);
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            padding: 1.5rem;
-            position: relative;
-            overflow: hidden;
+            /* Ultra-subtle dashboard grid background */
+            background-image: radial-gradient(circle at top, rgba(255,255,255,0.04) 1px, transparent 1px);
+            background-size: 32px 32px;
         }
 
-        /* Animated Background Orbs for Premium Ambient Glow */
-        .orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(100px);
-            z-index: 0;
-            opacity: 0.6;
-            animation: float 20s infinite ease-in-out alternate;
-        }
-        
-        .orb-1 {
-            width: 450px;
-            height: 450px;
-            background: rgba(99, 102, 241, 0.25); /* Indigo glow */
-            top: -10%;
-            left: -5%;
-            animation-delay: 0s;
+        /* SaaS Top Navigation Bar */
+        .navbar {
+            width: 100%;
+            height: 64px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 2rem;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        .orb-2 {
-            width: 550px;
-            height: 550px;
-            background: rgba(168, 85, 247, 0.2); /* Purple glow */
-            bottom: -15%;
-            right: -10%;
-            animation-delay: -5s;
-        }
-        
-        .orb-3 {
-            width: 400px;
-            height: 400px;
-            background: rgba(45, 212, 191, 0.15); /* Teal glow */
-            top: 40%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            animation-delay: -10s;
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            font-weight: 500;
         }
 
-        @keyframes float {
-            0% { transform: translate(0, 0) scale(1); }
-            50% { transform: translate(30px, 40px) scale(1.05); }
-            100% { transform: translate(-40px, 30px) scale(0.95); }
-        }
+        .nav-brand svg { width: 22px; height: 22px; }
+        .nav-separator { color: var(--border); margin: 0 8px; font-weight: 300; }
+        .nav-project { color: var(--text-secondary); }
 
         .container {
             width: 100%;
-            max-width: 540px;
-            z-index: 10;
+            max-width: 1040px;
+            padding: 4rem 2rem;
+            flex: 1;
         }
 
-        /* Enhanced Glassmorphism Card */
-        .card {
-            background: var(--card-bg);
-            backdrop-filter: blur(28px);
-            -webkit-backdrop-filter: blur(28px);
-            border: 1px solid var(--border-glow);
-            border-radius: 32px;
-            padding: 3.5rem;
-            box-shadow: 
-                0 4px 6px -1px rgba(0, 0, 0, 0.1),
-                0 24px 48px 8px rgba(0, 0, 0, 0.3),
-                inset 0 1px 1px rgba(255, 255, 255, 0.08); /* Inner shine */
-            animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            opacity: 0;
-            transform: translateY(30px);
+        .page-header {
+            margin-bottom: 3.5rem;
+            animation: fadeIn 0.6s ease;
         }
 
-        @keyframes slideUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 0.4rem 1.1rem;
-            background: rgba(99, 102, 241, 0.12);
-            border: 1px solid rgba(99, 102, 241, 0.25);
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: #a5b4fc;
-            margin-bottom: 1.25rem;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            box-shadow: 0 0 15px rgba(99, 102, 241, 0.1);
-        }
-
-        .header h1 {
+        .page-header h1 {
             font-size: 2.25rem;
-            font-weight: 800;
-            margin-bottom: 0.75rem;
-            color: var(--text-primary);
+            font-weight: 600;
             letter-spacing: -0.04em;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
         }
 
-        .header p {
+        .page-header p {
+            font-size: 1rem;
             color: var(--text-secondary);
-            font-size: 1.05rem;
-            font-weight: 400;
-            line-height: 1.5;
         }
 
-        .form-row {
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 2rem;
+        }
+
+        @media (max-width: 860px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Clean SaaS Panel styling */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            animation: fadeIn 0.6s ease backwards;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-delay-1 { animation-delay: 0.1s; }
+        .card-delay-2 { animation-delay: 0.2s; }
+
+        .card-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            background: #050505;
+        }
+
+        .card-header svg {
+            color: var(--text-secondary);
+        }
+
+        .card-body {
+            padding: 2rem 1.5rem;
+            flex: 1;
+        }
+
+        .form-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 1.25rem;
-            margin-bottom: 1.25rem;
+            gap: 1.5rem;
         }
 
         @media (max-width: 500px) {
-            .form-row {
-                grid-template-columns: 1fr;
-                gap: 1.25rem;
-            }
-            .card {
-                padding: 2.5rem 1.5rem;
-                border-radius: 24px;
-            }
+            .form-grid { grid-template-columns: 1fr; }
         }
 
         .form-group {
-            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            animation: fadeIn 0.6s ease backwards;
         }
+
+        .form-group:nth-child(1) { animation-delay: 0.2s; }
+        .form-group:nth-child(2) { animation-delay: 0.25s; }
+        .form-group:nth-child(3) { animation-delay: 0.3s; }
+        .form-group:nth-child(4) { animation-delay: 0.35s; }
 
         label {
-            display: block;
-            margin-bottom: 0.6rem;
-            font-size: 0.85rem;
-            font-weight: 600;
+            font-size: 0.8125rem;
             color: var(--text-secondary);
-            transition: color 0.3s ease;
+            font-weight: 500;
+            transition: color 0.2s ease;
         }
 
-        .input-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-
-        .input-wrapper svg {
-            position: absolute;
-            left: 1.1rem;
-            width: 1.2rem;
-            height: 1.2rem;
-            color: rgba(255, 255, 255, 0.25);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            pointer-events: none;
-        }
-
+        /* Inputs styled like code editors */
         input {
             width: 100%;
-            background: var(--input-bg);
-            border: 1px solid var(--input-border);
-            border-radius: 16px;
-            padding: 1rem 1rem 1rem 3rem;
+            background: var(--bg);
+            border: 1px solid var(--border);
             color: var(--text-primary);
-            font-size: 1rem;
-            font-family: inherit;
-            font-weight: 500;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15); /* Depth logic */
+            font-family: var(--font-mono);
+            font-size: 0.875rem;
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
         }
 
-        input::placeholder {
-            color: rgba(255, 255, 255, 0.15);
-        }
-
-        input:hover {
-            border-color: rgba(255, 255, 255, 0.2);
-            background: rgba(255, 255, 255, 0.05);
-        }
-
+        input:hover { border-color: var(--border-hover); }
         input:focus {
             outline: none;
-            border-color: var(--input-focus-border);
-            background: rgba(99, 102, 241, 0.03);
-            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15), inset 0 2px 4px rgba(0, 0, 0, 0.15);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 1px var(--primary), inset 0 2px 4px rgba(0,0,0,0.2);
+        }
+        input::placeholder { color: #333; }
+        .form-group:focus-within label { color: var(--text-primary); }
+
+        .btn-wrapper {
+            margin-top: 2.5rem;
+            border-top: 1px solid var(--border);
+            padding-top: 1.5rem;
+            display: flex;
+            justify-content: flex-end;
+            animation: fadeIn 0.6s ease backwards;
+            animation-delay: 0.4s;
         }
 
-        input:focus + svg {
-            color: var(--input-focus-border);
-            transform: scale(1.1);
-        }
-
-        /* Label highlight effect */
-        .form-group:focus-within label {
-            color: #d4d4d8;
-        }
-
+        /* High-contrast solid button */
         button {
-            width: 100%;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 16px;
-            padding: 1.15rem;
-            font-size: 1.05rem;
-            font-weight: 700;
+            width: auto;
+            min-width: 140px;
+            padding: 0.625rem 1.25rem;
+            background: var(--primary);
+            color: var(--primary-invert);
+            border: none;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 600;
             font-family: inherit;
             cursor: pointer;
-            display: flex;
+            transition: all 0.2s ease;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 0.75rem;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 8px 24px -6px rgba(99, 102, 241, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.3);
-            margin-top: 2.5rem;
-            position: relative;
-            overflow: hidden;
-            letter-spacing: 0.02em;
-        }
-
-        button::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(255,255,255,0.2), transparent);
-            opacity: 0;
-            transition: opacity 0.3s;
-            pointer-events: none;
+            gap: 0.5rem;
         }
 
         button:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 28px -8px rgba(99, 102, 241, 0.9), inset 0 1px 1px rgba(255, 255, 255, 0.4);
-        }
-
-        button:hover:not(:disabled)::after {
-            opacity: 1;
+            opacity: 0.9;
+            transform: translateY(-1px);
         }
 
         button:active:not(:disabled) {
-            transform: translateY(1px);
-            box-shadow: 0 4px 12px -4px rgba(99, 102, 241, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+            transform: translateY(0px);
         }
 
         button:disabled {
-            opacity: 0.6;
+            background: var(--border);
+            color: var(--text-secondary);
             cursor: not-allowed;
-            background: rgba(99, 102, 241, 0.4);
-            box-shadow: none;
-            border: 1px solid transparent;
             transform: none;
         }
 
         .spinner {
             display: none;
-            width: 1.25rem;
-            height: 1.25rem;
-            border: 2px solid rgba(255,255,255,0.2);
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid rgba(0,0,0,0.2);
             border-radius: 50%;
+            border-top-color: black;
+            animation: spin 0.6s linear infinite;
+        }
+
+        button:disabled .spinner {
             border-top-color: white;
-            animation: spin 0.8s linear infinite;
+            border-color: rgba(255,255,255,0.2);
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Output Panel Layout */
+        .result-panel {
+            height: 100%;
         }
 
-        .result-container {
-            margin-top: 2.5rem;
-            padding: 1.75rem;
-            border-radius: 20px;
-            background: rgba(52, 211, 153, 0.1); /* Success green tint */
-            border: 1px solid rgba(52, 211, 153, 0.25);
-            text-align: center;
-            display: none;
-            animation: scaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            position: relative;
-            overflow: hidden;
-            box-shadow: inset 0 2px 10px rgba(52, 211, 153, 0.05);
+        .result-body {
+            background: var(--bg);
+            border-radius: 0 0 12px 12px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
         }
 
-        .result-container::before {
-            content: '';
-            position: absolute;
-            top: -50%; left: -50%; width: 200%; height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 60%);
-            opacity: 0;
-            transition: opacity 0.5s;
-            pointer-events: none;
+        /* Status indication badge */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            padding: 0.35rem 0.75rem;
+            border-radius: 99px;
+            background: rgba(255,255,255,0.03);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+            margin-bottom: 2rem;
+            align-self: flex-start;
+            transition: all 0.3s ease;
         }
-        .result-container:hover::before { opacity: 1; }
 
-        .result-container.error {
-            background: rgba(248, 113, 113, 0.1);
-            border-color: rgba(248, 113, 113, 0.25);
-            box-shadow: inset 0 2px 10px rgba(248, 113, 113, 0.05);
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--text-secondary);
+            transition: all 0.3s ease;
         }
 
-        @keyframes scaleIn {
-            from { opacity: 0; transform: scale(0.96) translateY(10px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
+        .status-badge.success { background: rgba(16, 185, 129, 0.05); border-color: rgba(16, 185, 129, 0.2); color: var(--success); }
+        .status-badge.success .status-dot { background: var(--success); box-shadow: 0 0 8px var(--success); }
+        
+        .status-badge.error { background: rgba(239, 68, 68, 0.05); border-color: rgba(239, 68, 68, 0.2); color: var(--error); }
+        .status-badge.error .status-dot { background: var(--error); box-shadow: 0 0 8px var(--error); }
+        
+        .status-badge.loading { background: rgba(59, 130, 246, 0.05); border-color: rgba(59, 130, 246, 0.2); color: var(--accent); }
+        .status-badge.loading .status-dot { background: var(--accent); box-shadow: 0 0 8px var(--accent); animation: pulse 1.5s infinite; }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.4; }
+            100% { opacity: 1; }
+        }
+
+        .result-display {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
         }
 
         .result-label {
-            font-size: 0.8rem;
-            color: var(--success);
-            margin-bottom: 0.6rem;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            font-weight: 500;
             text-transform: uppercase;
-            letter-spacing: 0.12em;
-            font-weight: 800;
+            letter-spacing: 0.05em;
         }
 
         .result-value {
-            font-size: 2.25rem;
-            font-weight: 800;
-            color: var(--text-primary);
-            letter-spacing: -0.03em;
-        }
-
-        .result-container.error .result-label {
-            color: var(--error);
-        }
-
-        .result-container.error .result-value {
-            color: var(--text-primary);
-            font-size: 1.25rem;
-            line-height: 1.5;
+            font-size: 1.5rem;
             font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+            margin-bottom: 0.5rem;
         }
+
+        /* Developer API Response Block */
+        .json-block {
+            background: #050505;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-top: 2rem;
+            font-family: var(--font-mono);
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            overflow-x: auto;
+            position: relative;
+        }
+
+        .json-block::before {
+            content: 'Response';
+            position: absolute;
+            top: -10px;
+            left: 12px;
+            background: var(--bg);
+            padding: 0 6px;
+            font-family: var(--font-sans);
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #666;
+        }
+
+        .json-bracket { color: #666; }
+        .json-key { color: var(--text-primary); }
+        .json-string { color: var(--success); }
+        .json-error { color: var(--error); }
     </style>
 </head>
 <body>
 
-    <!-- Premium Background Orbs -->
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
+    <!-- Professional Top Nav Layout -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <!-- Sleek geometrical logo -->
+            <svg viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="10" fill="white" />
+                <path fill="black" d="M12 7L16 14H8L12 7Z" />
+            </svg>
+            Workspace <span class="nav-separator">/</span> <span class="nav-project">Iris Model API</span>
+        </div>
+    </nav>
 
-    <div class="container">
-        <div class="card">
-            <div class="header">
-                <span class="badge">Machine Learning Engine</span>
-                <h1>Iris Classification</h1>
-                <p>Input flower measurements below to run inferences and identify species</p>
+    <main class="container">
+        <header class="page-header">
+            <h1>Model Inference</h1>
+            <p>Pass your measurements into the deployed Iris model to compute predictions.</p>
+        </header>
+
+        <div class="dashboard-grid">
+            <!-- Left Side: Form panel -->
+            <div class="card card-delay-1">
+                <div class="card-header">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    Payload Editor
+                </div>
+                
+                <div class="card-body">
+                    <form id="predictionForm" novalidate>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="sepal_length">sepal_length</label>
+                                <input type="number" id="sepal_length" step="0.1" min="4" max="8" placeholder="4.0 - 8.0" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="sepal_width">sepal_width</label>
+                                <input type="number" id="sepal_width" step="0.1" min="2" max="5" placeholder="2.0 - 5.0" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="petal_length">petal_length</label>
+                                <input type="number" id="petal_length" step="0.1" min="1" max="7" placeholder="1.0 - 7.0" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="petal_width">petal_width</label>
+                                <input type="number" id="petal_width" step="0.1" min="0" max="3" placeholder="0.0 - 3.0" required>
+                            </div>
+                        </div>
+
+                        <div class="btn-wrapper">
+                            <button type="submit" id="predictBtn">
+                                <div class="spinner" id="spinner"></div>
+                                <span id="btnText">Run Prediction</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
 
-            <form id="predictionForm" novalidate>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="sepal_length">Sepal Length (cm)</label>
-                        <div class="input-wrapper">
-                            <input type="number" id="sepal_length" step="0.1" min="0" placeholder="e.g. 5.1" required>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
-                            </svg>
-                        </div>
+            <!-- Right Side: API Response Display -->
+            <div class="card result-panel card-delay-2">
+                <div class="card-header">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="4 7 4 4 20 4 20 7"></polyline><line x1="9" y1="20" x2="15" y2="20"></line><line x1="12" y1="4" x2="12" y2="20"></line>
+                    </svg>
+                    Inference Status
+                </div>
+                
+                <div class="card-body result-body">
+                    <div class="status-badge" id="statusBadge">
+                        <div class="status-dot"></div>
+                        <span id="statusText">IDLE</span>
                     </div>
-                    <div class="form-group">
-                        <label for="sepal_width">Sepal Width (cm)</label>
-                        <div class="input-wrapper">
-                            <input type="number" id="sepal_width" step="0.1" min="0" placeholder="e.g. 3.5" required>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-                            </svg>
+
+                    <div class="result-display">
+                        <div class="result-label" id="resultLabel">Output</div>
+                        <div class="result-value" id="resultValue">Ready</div>
+                    </div>
+
+                    <!-- Developer-focused JSON block -->
+                    <div class="json-block">
+                        <div id="jsonPreview">
+<span class="json-bracket">{</span>
+  <span class="json-key">"status"</span>: <span class="json-string">"waiting_for_input"</span>
+<span class="json-bracket">}</span>
                         </div>
                     </div>
                 </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="petal_length">Petal Length (cm)</label>
-                        <div class="input-wrapper">
-                            <input type="number" id="petal_length" step="0.1" min="0" placeholder="e.g. 1.4" required>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="petal_width">Petal Width (cm)</label>
-                        <div class="input-wrapper">
-                            <input type="number" id="petal_width" step="0.1" min="0" placeholder="e.g. 0.2" required>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-
-                <button type="submit" id="predictBtn">
-                    <div class="spinner" id="spinner"></div>
-                    <span id="btnText">Execute Prediction</span>
-                </button>
-            </form>
-
-            <div class="result-container" id="resultContainer">
-                <div class="result-label" id="resultLabel">Result</div>
-                <div class="result-value" id="resultValue">-</div>
             </div>
         </div>
-    </div>
+    </main>
 
     <script>
         document.getElementById('predictionForm').addEventListener('submit', async function(e) {
@@ -452,9 +477,12 @@
             const btn = document.getElementById('predictBtn');
             const spinner = document.getElementById('spinner');
             const btnText = document.getElementById('btnText');
-            const resultContainer = document.getElementById('resultContainer');
+            
+            const statusBadge = document.getElementById('statusBadge');
+            const statusText = document.getElementById('statusText');
             const resultLabel = document.getElementById('resultLabel');
             const resultValue = document.getElementById('resultValue');
+            const jsonPreview = document.getElementById('jsonPreview');
             const inputs = document.querySelectorAll('input');
 
             // Collect and validate data
@@ -465,42 +493,41 @@
                 petal_width: parseFloat(document.getElementById('petal_width').value)
             };
 
+            const validationRules = {
+                sepal_length: { min: 4, max: 8, name: 'sepal_length' },
+                sepal_width: { min: 2, max: 5, name: 'sepal_width' },
+                petal_length: { min: 1, max: 7, name: 'petal_length' },
+                petal_width: { min: 0, max: 3, name: 'petal_width' }
+            };
+
             for (const key in payload) {
-                if (isNaN(payload[key]) || payload[key] <= 0) {
-                    showResult('Validation Error', 'Please verify input measurements.', true);
+                const val = payload[key];
+                const rule = validationRules[key];
+                
+                if (isNaN(val) || val < rule.min || val > rule.max) {
+                    setStatus('error', 'VALIDATION_ERROR', 'Validation Failed', 'Out of valid bounds');
+                    renderJson({ error: `Field '${rule.name}' must be between ${rule.min} and ${rule.max}. You entered ${isNaN(val) ? 'NaN' : val}.` }, 'error');
                     
-                    // Add shake animation to card for error feedback
-                    const card = document.querySelector('.card');
-                    card.style.animation = 'none';
-                    card.offsetHeight; // force reflow
-                    // Custom shake keyframes inline via JS
-                    card.style.animation = 'shake 0.4s cubic-bezier(.36,.07,.19,.97) both';
-                    
-                    if (!document.getElementById('shake-style')) {
-                        const style = document.createElement('style');
-                        style.id = 'shake-style';
-                        style.innerHTML = `
-                        @keyframes shake {
-                          10%, 90% { transform: translate3d(-1px, 0, 0); }
-                          20%, 80% { transform: translate3d(2px, 0, 0); }
-                          30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
-                          40%, 60% { transform: translate3d(4px, 0, 0); }
-                        }`;
-                        document.head.appendChild(style);
-                    }
+                    // Quick shake animation
+                    const formPanel = document.querySelector('.card-delay-1');
+                    formPanel.style.transform = 'translateX(-5px)';
+                    setTimeout(() => formPanel.style.transform = 'translateX(5px)', 100);
+                    setTimeout(() => formPanel.style.transform = 'translateX(0)', 200);
                     return;
                 }
             }
 
-            // Enter loading state
+            // Set Loading State
             btn.disabled = true;
             inputs.forEach(input => input.disabled = true);
             spinner.style.display = 'block';
-            btnText.textContent = 'Processing Model...';
-            resultContainer.style.display = 'none';
+            btnText.textContent = 'Executing...';
+            
+            setStatus('loading', 'EXECUTING', 'Model Processing', 'Running Inference...');
+            jsonPreview.innerHTML = `<span class="json-bracket">{</span>\n  <span class="json-key">"payload"</span>: <span class="json-bracket">...</span>\n  <span class="json-key">"status"</span>: <span class="json-string">"sending_request"</span>\n<span class="json-bracket">}</span>`;
 
             try {
-                // Execute API request
+                // Same API Endpoint Preserved
                 const response = await fetch('https://automlops.onrender.com/predict', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -508,39 +535,61 @@
                 });
 
                 if (!response.ok) {
-                    throw new Error(`API Error: ${response.status}`);
+                    throw new Error(`API returned ${response.status}`);
                 }
 
                 const data = await response.json();
                 
                 if (data.class_name) {
-                    showResult('Verified Identity', data.class_name, false);
+                    setStatus('success', 'SUCCESS', 'Prediction Result', data.class_name);
+                    renderJson(data, 'success');
                 } else {
-                    throw new Error('Unexpected response signature.');
+                    throw new Error('Malformed response');
                 }
             } catch (error) {
-                showResult('System Error', error.message.includes('API') ? error.message : 'Unable to reach machine learning API endpoint.', true);
+                const errMsg = error.message.includes('API') ? error.message : 'Network/CORS Error';
+                setStatus('error', 'API_ERROR', 'Request Failed', errMsg);
+                renderJson({ error: errMsg }, 'error');
             } finally {
-                // Reset interaction state
+                // Restore Form State
                 btn.disabled = false;
                 inputs.forEach(input => input.disabled = false);
                 spinner.style.display = 'none';
-                btnText.textContent = 'Execute Prediction';
+                btnText.textContent = 'Run Prediction';
             }
 
-            function showResult(label, value, isError) {
-                resultContainer.className = 'result-container' + (isError ? ' error' : '');
-                resultLabel.textContent = label;
-                resultValue.textContent = value;
-                
-                // Reset animation
-                resultContainer.style.animation = 'none';
-                resultContainer.offsetHeight; // force reflow
-                resultContainer.style.animation = 'scaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards';
-                
-                resultContainer.style.display = 'block';
+            function setStatus(type, badgeTxt, labelTxt, valueTxt) {
+                statusBadge.className = `status-badge ${type}`;
+                statusText.textContent = badgeTxt;
+                resultLabel.textContent = labelTxt;
+                resultValue.textContent = valueTxt;
+            }
+
+            function renderJson(obj, type) {
+                let html = '<span class="json-bracket">{</span>\n';
+                const keys = Object.keys(obj);
+                keys.forEach((key, index) => {
+                    const val = obj[key];
+                    const isLast = index === keys.length - 1;
+                    const valueClass = type === 'error' ? 'json-error' : 'json-string';
+                    html += `  <span class="json-key">"${key}"</span>: <span class="${valueClass}">"${val}"</span>${isLast ? '' : ','}\n`;
+                });
+                html += '<span class="json-bracket">}</span>';
+                jsonPreview.innerHTML = html;
             }
         });
     </script>
+    <h2>Monitoring Logs</h2>
+<button onclick="loadLogs()">Load Logs</button>
+<pre id="logs"></pre>
+
+<script>
+async function loadLogs() {
+    const res = await fetch("http://localhost:8000/logs");
+    const data = await res.json();
+    document.getElementById("logs").innerText =
+        JSON.stringify(data, null, 2);
+}
+</script>
 </body>
 </html>
