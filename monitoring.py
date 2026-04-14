@@ -5,7 +5,7 @@ LOG_FILE = "logs/monitoring_log.json"
 
 def log_event(event_type, details=None, status="success"):
     log_entry = {
-        "timestamp": str(datetime.datetime.now()),
+        "timestamp": str(datetime.now()),
         "event": event_type,
         "status": status,
         "details": details
@@ -24,7 +24,7 @@ def log_event(event_type, details=None, status="success"):
 
     with open(LOG_FILE, "w") as f:
         json.dump(data, f, indent=4)
-        
+
 def log_prediction(input_data, prediction, mode="single"):
     entry = {
         "timestamp": str(datetime.datetime.now()),
