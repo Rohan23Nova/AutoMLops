@@ -3,6 +3,8 @@ from train import train_models
 from model_selection import select_and_save_best_model
 from drift_detection import detect_drift
 import pandas as pd
+from monitoring import log_event
+
 
 def check_and_retrain():
     reference = pd.read_csv("data/processed/reference.csv")
@@ -11,12 +13,13 @@ def check_and_retrain():
     report = detect_drift(reference, current)
 
     drift_found = any(col["drift_detected"] for col in report.values())
-
+    log_event("drift_check", report)
     if drift_found:
         print("⚠️ Drift detected. Retraining model...")
         run_pipeline()
     else:
         print("✅ No drift detected.")
+        
 def run_pipeline():
     load_and_save_data()
     results = train_models()
@@ -25,3 +28,4 @@ def run_pipeline():
 
 if __name__ == "__main__":
     run_pipeline()
+

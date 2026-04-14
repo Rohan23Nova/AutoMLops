@@ -8,9 +8,32 @@ import mlflow
 from main_pipeline import run_pipeline
 import threading
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi import Depends, HTTPException
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from auth import create_access_token, verify_user
+from jose import JWTError, jwt
+from auth import SECRET_KEY, ALGORITHM
+from pydantic import BaseModel
 
+class InputData(BaseModel):
+    sepal_length: float
+    sepal_width: float
+    petal_length: float
+    petal_width: float
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 mlflow.set_experiment("AutoMLOps_Inference")
+
+def get_current_user(token: str = Depends(oauth2_scheme)):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username = payload.get("sub")
+        if username is None:
+            raise HTTPException(status_code=401, detail="Invalid token")
+        return username
+    except JWTError:
+        raise HTTPException(status_code=401, detail="Invalid token")
 
 logging.basicConfig(
     filename="logs/api_logs.log",
@@ -49,7 +72,7 @@ def home():
     return {"message": "AutoMLOps API is running"}
 
 @app.post("/predict")
-def predict(data: IrisInput):
+def predict(data: InputData, user: str = Depends(get_current_user)):
     features = np.array([
         data.sepal_length,
         data.sepal_width,
@@ -71,7 +94,7 @@ def predict(data: IrisInput):
         "class_name": label_map[pred_class]
     }
 @app.post("/retrain")
-def retrain():
+def retrain(user: str = Depends(get_current_user)):
     thread = threading.Thread(target=run_pipeline)
     thread.start()
 
@@ -83,10 +106,18 @@ def check_drift():
     check_and_retrain()
     return {"message": "Drift check completed"}
 @app.get("/logs")
-def get_logs():
+def get_logs(user: str = Depends(get_current_user)):
     try:
         with open("logs/monitoring_log.json", "r") as f:
             data = json.load(f)
         return data
     except:
         return []
+@app.post("/login")
+def login(form_data: OAuth2PasswordRequestForm = Depends()):
+    user = verify_user(form_data.username, form_data.password)
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+
+    access_token = create_access_token(data={"sub": user["username"]})
+    return {"access_token": access_token, "token_type": "bearer"}
