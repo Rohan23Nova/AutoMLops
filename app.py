@@ -83,10 +83,10 @@ def home():
 @app.post("/predict")
 def predict(data: InputData, user: str = Depends(get_current_user)):
     try:
-        # ✅ Convert input to DataFrame
+        import pandas as pd
+
         df = pd.DataFrame([data.dict()])
 
-        # ✅ FIX column mismatch
         df.columns = [
             "sepal length (cm)",
             "sepal width (cm)",
@@ -94,30 +94,17 @@ def predict(data: InputData, user: str = Depends(get_current_user)):
             "petal width (cm)"
         ]
 
-        # ✅ Predict
-        with mlflow.start_run():
-            prediction = model.predict(df)
-            pred_class = int(prediction[0])
-
-            mlflow.log_param("input", str(data.dict()))
-            mlflow.log_metric("prediction", pred_class)
-
-        # ✅ NOW log (after prediction exists)
-        log_prediction(
-            input_data=data.dict(),
-            prediction=[pred_class],
-            mode="single"
-        )
-
-        logging.info(f"Input: {data.dict()} | Prediction: {pred_class}")
+        prediction = model.predict(df)
+        pred_class = int(prediction[0])
 
         return {
-            "prediction": pred_class,
-            "class_name": label_map[pred_class]
+            "prediction": pred_class
         }
 
     except Exception as e:
-        return {"error": str(e)}
+        return {
+            "error": str(e)
+        }
 @app.post("/retrain")
 def retrain(user: str = Depends(get_current_user)):
     thread = threading.Thread(target=run_pipeline)
