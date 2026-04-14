@@ -5,11 +5,6 @@ from drift_detection import detect_drift
 import pandas as pd
 from monitoring import log_event
 
-log_event(
-    event_type="model_retraining",
-    details={"model": "RandomForest"},
-    status="completed"
-)
 def check_and_retrain():
     reference = pd.read_csv("data/processed/reference.csv")
     current = pd.read_csv("data/processed/current.csv")

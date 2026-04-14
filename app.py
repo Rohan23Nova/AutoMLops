@@ -50,12 +50,14 @@ logging.basicConfig(
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "http://127.0.0.1:3000",
+        "http://localhost:3000"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 # Load model
 with open("models/best_model.pkl", "rb") as f:
     model = pickle.load(f)

@@ -2,11 +2,7 @@ import pandas as pd
 from scipy.stats import ks_2samp
 from monitoring import log_event
 
-log_event(
-    event_type="drift_detected",
-    details={"drift": True},
-    status="retraining_triggered"
-)
+
 def detect_drift(reference_df, current_df, threshold=0.05):
     drift_report = {}
 
