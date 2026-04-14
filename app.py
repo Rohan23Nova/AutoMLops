@@ -82,31 +82,42 @@ def home():
 
 @app.post("/predict")
 def predict(data: InputData, user: str = Depends(get_current_user)):
-    log_prediction(
-    input_data=data.dict(),
-    prediction=prediction.tolist(),
-    mode="single"
-)
-    features = np.array([
-        data.sepal_length,
-        data.sepal_width,
-        data.petal_length,
-        data.petal_width
-    ]).reshape(1, -1)
+    try:
+        # ✅ Convert input to DataFrame
+        df = pd.DataFrame([data.dict()])
 
-    with mlflow.start_run():
-        prediction = model.predict(features)
-        pred_class = int(prediction[0])
+        # ✅ FIX column mismatch
+        df.columns = [
+            "sepal length (cm)",
+            "sepal width (cm)",
+            "petal length (cm)",
+            "petal width (cm)"
+        ]
 
-        mlflow.log_param("input", str(data.dict()))
-        mlflow.log_metric("prediction", pred_class)
+        # ✅ Predict
+        with mlflow.start_run():
+            prediction = model.predict(df)
+            pred_class = int(prediction[0])
 
-    logging.info(f"Input: {data.dict()} | Prediction: {pred_class}")
+            mlflow.log_param("input", str(data.dict()))
+            mlflow.log_metric("prediction", pred_class)
 
-    return {
-        "prediction": pred_class,
-        "class_name": label_map[pred_class]
-    }
+        # ✅ NOW log (after prediction exists)
+        log_prediction(
+            input_data=data.dict(),
+            prediction=[pred_class],
+            mode="single"
+        )
+
+        logging.info(f"Input: {data.dict()} | Prediction: {pred_class}")
+
+        return {
+            "prediction": pred_class,
+            "class_name": label_map[pred_class]
+        }
+
+    except Exception as e:
+        return {"error": str(e)}
 @app.post("/retrain")
 def retrain(user: str = Depends(get_current_user)):
     thread = threading.Thread(target=run_pipeline)
