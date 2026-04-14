@@ -393,6 +393,25 @@
             <p>Pass your measurements into the deployed Iris model to compute predictions.</p>
         </header>
 
+        <!-- === AUTH ADDED === -->
+        <div class="card" style="margin-bottom: 2rem;">
+            <div class="card-header">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+                Authentication
+            </div>
+            <div class="card-body" style="padding: 1.5rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                <div style="display: flex; gap: 1rem;">
+                    <input type="text" id="username" placeholder="Username" style="max-width: 250px;">
+                    <input type="password" id="password" placeholder="Password" style="max-width: 250px;">
+                </div>
+                <button type="button" onclick="login()">Login</button>
+                <div id="authStatus" style="font-size: 0.875rem; color: var(--text-secondary);"></div>
+            </div>
+        </div>
+        <!-- ================== -->
+
         <div class="dashboard-grid">
             <!-- Left Side: Form panel -->
             <div class="card card-delay-1">
@@ -471,6 +490,47 @@
     </main>
 
     <script>
+        // === AUTH ADDED ===
+        let token = "";
+
+        async function login() {
+            const u = document.getElementById('username').value;
+            const p = document.getElementById('password').value;
+            const authStatus = document.getElementById('authStatus');
+            authStatus.textContent = "Logging in...";
+            authStatus.style.color = "var(--text-secondary)";
+            
+            try {
+                // Using application/x-www-form-urlencoded expected by standard OAuth2 FastAPI implementations
+                const formData = new URLSearchParams();
+                formData.append("username", u);
+                formData.append("password", p);
+                
+                const res = await fetch("http://localhost:8000/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: formData
+                });
+                
+                if (res.ok) {
+                    const data = await res.json();
+                    token = data.access_token || data.token;
+                    authStatus.textContent = "Logged in successfully";
+                    authStatus.style.color = "var(--success)";
+                } else if (res.status === 401) {
+                    authStatus.textContent = "Unauthorized - Invalid credentials";
+                    authStatus.style.color = "var(--error)";
+                } else {
+                    authStatus.textContent = "Login failed";
+                    authStatus.style.color = "var(--error)";
+                }
+            } catch (e) {
+                authStatus.textContent = "Error logging in";
+                authStatus.style.color = "var(--error)";
+            }
+        }
+        // ==================
+
         document.getElementById('predictionForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
@@ -484,6 +544,20 @@
             const resultValue = document.getElementById('resultValue');
             const jsonPreview = document.getElementById('jsonPreview');
             const inputs = document.querySelectorAll('input');
+
+            // === AUTH ADDED ===
+            if (!token) {
+                setStatus('error', 'AUTH_ERROR', 'Unauthorized', 'Please login first');
+                renderJson({ error: 'Please login first' }, 'error');
+                
+                // Quick shake animation
+                const formPanel = document.querySelector('.card-delay-1');
+                formPanel.style.transform = 'translateX(-5px)';
+                setTimeout(() => formPanel.style.transform = 'translateX(5px)', 100);
+                setTimeout(() => formPanel.style.transform = 'translateX(0)', 200);
+                return;
+            }
+            // ==================
 
             // Collect and validate data
             const payload = {
@@ -528,11 +602,20 @@
 
             try {
                 // Same API Endpoint Preserved
+                // === MODIFIED ===
                 const response = await fetch('https://automlops.onrender.com/predict', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
                     body: JSON.stringify(payload)
                 });
+
+                if (response.status === 401) {
+                    throw new Error('Unauthorized');
+                }
+                // ================
 
                 if (!response.ok) {
                     throw new Error(`API returned ${response.status}`);
@@ -547,7 +630,7 @@
                     throw new Error('Malformed response');
                 }
             } catch (error) {
-                const errMsg = error.message.includes('API') ? error.message : 'Network/CORS Error';
+                const errMsg = error.message.includes('API') || error.message.includes('Unauthorized') ? error.message : 'Network/CORS Error';
                 setStatus('error', 'API_ERROR', 'Request Failed', errMsg);
                 renderJson({ error: errMsg }, 'error');
             } finally {
@@ -580,16 +663,38 @@
         });
     </script>
     <h2>Monitoring Logs</h2>
-<button onclick="loadLogs()">Load Logs</button>
-<pre id="logs"></pre>
+    <button onclick="loadLogs()" style="margin-bottom: 1rem;">Load Logs</button>
+    <pre id="logs" style="background: var(--surface); padding: 1rem; border-radius: 8px; border: 1px solid var(--border); overflow-x: auto; font-family: var(--font-mono); font-size: 0.8125rem;"></pre>
 
-<script>
-async function loadLogs() {
-    const res = await fetch("http://localhost:8000/logs");
-    const data = await res.json();
-    document.getElementById("logs").innerText =
-        JSON.stringify(data, null, 2);
-}
-</script>
+    <script>
+    // === MODIFIED ===
+    async function loadLogs() {
+        // === AUTH ADDED ===
+        if (!token) {
+            document.getElementById("logs").innerText = "Please login first";
+            return;
+        }
+        // ==================
+
+        try {
+            const res = await fetch("http://localhost:8000/logs", {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+            
+            if (res.status === 401) {
+                document.getElementById("logs").innerText = "Unauthorized";
+                return;
+            }
+
+            const data = await res.json();
+            document.getElementById("logs").innerText = JSON.stringify(data, null, 2);
+        } catch (e) {
+            document.getElementById("logs").innerText = "Error: " + e.message;
+        }
+    }
+    // ================
+    </script>
 </body>
 </html>

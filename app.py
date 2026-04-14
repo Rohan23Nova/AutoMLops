@@ -14,6 +14,13 @@ from auth import create_access_token, verify_user
 from jose import JWTError, jwt
 from auth import SECRET_KEY, ALGORITHM
 from pydantic import BaseModel
+from fastapi import UploadFile, File
+import pandas as pd
+import pickle
+from monitoring import log_event
+from monitoring import log_prediction
+
+
 
 class InputData(BaseModel):
     sepal_length: float
@@ -73,6 +80,11 @@ def home():
 
 @app.post("/predict")
 def predict(data: InputData, user: str = Depends(get_current_user)):
+    log_prediction(
+    input_data=data.dict(),
+    prediction=prediction.tolist(),
+    mode="single"
+)
     features = np.array([
         data.sepal_length,
         data.sepal_width,
@@ -121,3 +133,33 @@ def login(form_data: OAuth2PasswordRequestForm = Depends()):
 
     access_token = create_access_token(data={"sub": user["username"]})
     return {"access_token": access_token, "token_type": "bearer"}
+
+# load model (if not already global)
+with open("models/best_model.pkl", "rb") as f:
+    model = pickle.load(f)
+
+@app.post("/batch_predict")
+def batch_predict(file: UploadFile = File(...), user: str = Depends(get_current_user)):
+    log_prediction(
+    input_data="batch_file",
+    prediction=predictions.tolist(),
+    mode="batch"
+)
+    try:
+        df = pd.read_csv(file.file)
+
+        predictions = model.predict(df)
+
+        return {
+            "rows_received": len(df),
+            "predictions": predictions.tolist()
+        }
+
+    except Exception as e:
+        return {"error": str(e)}
+    
+    log_event(
+        event_type="batch_prediction",
+        details={"rows": len(df)},
+        status="success"
+    )
