@@ -4,3 +4,7 @@ numpy
 scikit-learn
 pandas
 mlflow
+python-jose
+passlib
+bcrypt
+python-multipart
