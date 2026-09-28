@@ -2,3 +2,7 @@
 2026-09-28 22:02:26,094 - Prediction error: type object 'datetime.datetime' has no attribute 'datetime'
 2026-09-28 22:05:58,611 - User: admin | Input: {'age': 28, 'income': 45000, 'city': 'Jaipur', 'student': 'no'} | Prediction: yes
 2026-09-28 22:28:56,146 - User: admin | Input: {'sepal length (cm)': 5.1, 'sepal width (cm)': 3.5, 'petal length (cm)': 1.4, 'petal width (cm)': 0.2} | Prediction: 0
+2026-09-28 23:09:50,905 - Prediction error: columns are missing: {'sepal length (cm)', 'petal width (cm)', 'petal length (cm)', 'sepal width (cm)'}
+2026-09-28 23:10:00,890 - Prediction error: columns are missing: {'sepal length (cm)', 'petal width (cm)', 'petal length (cm)', 'sepal width (cm)'}
+2026-09-28 23:17:11,383 - Prediction error: columns are missing: {'petal width (cm)', 'petal length (cm)', 'sepal width (cm)', 'sepal length (cm)'}
+2026-09-28 23:20:23,163 - User: admin | Input: {'age': 28, 'income': 45000, 'city': 'Jaipur', 'student': 'no'} | Prediction: yes

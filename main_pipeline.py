@@ -17,90 +17,77 @@ DEFAULT_TARGET = "target"
 # ============================================================
 # RETRAINING / DRIFT DETECTION
 # ============================================================
-def check_and_retrain():
+def check_and_retrain(
+    reference_path="data/processed/reference.csv",
+    current_path="data/processed/current.csv",
+    target_column="target",
+    auto_deploy=True
+):
+    try:
+        reference = pd.read_csv(reference_path)
+        current = pd.read_csv(current_path)
 
-    reference = pd.read_csv(
-        "data/processed/reference.csv"
-    )
+        report = detect_drift(reference, current)
 
-    current = pd.read_csv(
-        "data/processed/current.csv"
-    )
-
-    report = detect_drift(
-        reference,
-        current
-    )
-
-    drift_found = any(
-        col["drift_detected"]
-        for col in report.values()
-    )
-
-    log_event(
-        "drift_check",
-        report
-    )
-
-    # --------------------------------------------------------
-    # No drift
-    # --------------------------------------------------------
-
-    if not drift_found:
-
-        print(
-            "\nNo drift detected."
+        drift_found = any(
+            result["drift_detected"]
+            for result in report.values()
         )
 
         log_event(
-            "retraining_skipped",
+            "drift_check",
             {
-                "reason": "No data drift detected"
+                "drift_detected": drift_found,
+                "report": report
             }
         )
 
-        return {
-            "drift_detected": False,
-            "retraining_triggered": False,
-            "message": "No drift detected"
-        }
+        if not drift_found:
+            print("No drift detected.")
 
-    # --------------------------------------------------------
-    # Drift detected
-    # --------------------------------------------------------
+            log_event(
+                "retraining_skipped",
+                {
+                    "reason": "No data drift detected"
+                }
+            )
 
-    print(
-        "\nDrift detected."
-    )
+            return {
+                "status": "no_drift",
+                "drift_detected": False,
+                "retrained": False
+            }
 
-    print(
-        "Starting automated retraining..."
-    )
+        print("Drift detected. Retraining model...")
 
-    log_event(
-        "retraining_started",
-        {
-            "reason": "Data drift detected"
-        }
-    )
+        log_event(
+            "retraining_started",
+            {
+                "dataset": current_path,
+                "target_column": target_column
+            }
+        )
 
-    try:
-
-        run_pipeline(
-            auto_deploy=True
+        result = run_pipeline(
+            dataset_path=current_path,
+            target_column=target_column,
+            auto_deploy=auto_deploy
         )
 
         log_event(
             "retraining_completed",
             {
-                "reason": "Data drift detected"
+                "dataset": current_path,
+                "target_column": target_column,
+                "pipeline_result": result
             }
         )
 
         return {
+            "status": "retrained",
             "drift_detected": True,
-            "retraining_triggered": True,
-            "message": "Retraining and deployment completed"
+            "retrained": True,
+            "pipeline_result": result
         }
 
     except Exception as e:
@@ -113,14 +100,10 @@ def check_and_retrain():
             status="failed"
         )
 
-        print(
-            f"\nRetraining failed: {e}"
-        )
+        print(f"Retraining failed: {e}")
 
         return {
-            "drift_detected": True,
-            "retraining_triggered": True,
-            "message": "Retraining failed",
+            "status": "failed",
             "error": str(e)
         }
 # ============================================================
@@ -130,76 +113,41 @@ def check_and_retrain():
 def run_pipeline(
     dataset_path=None,
     target_column=None,
-    auto_deploy=True
+    auto_deploy=False
 ):
-    """
-    Execute the complete AutoMLOps training pipeline.
-
-    Steps:
-    1. Prepare dataset
-    2. Train multiple models
-    3. Select best model
-    4. Register model in MLflow
-    5. Optionally deploy the registered version
-    """
-
-    # --------------------------------------------------------
-    # Use existing Iris workflow by default
-    # --------------------------------------------------------
-
     if dataset_path is None:
-
         load_and_save_data()
-
         dataset_path = DEFAULT_DATASET
 
     if target_column is None:
-
         target_column = DEFAULT_TARGET
-
-    # --------------------------------------------------------
-    # Train models
-    # --------------------------------------------------------
 
     results = train_models(
         data_path=dataset_path,
         target_column=target_column
     )
 
-    # --------------------------------------------------------
-    # Select and register best model
-    # --------------------------------------------------------
-
-    select_and_save_best_model(
+    best_model = select_and_save_best_model(
         results,
         target_column=target_column,
         dataset_path=dataset_path
     )
 
-    # --------------------------------------------------------
-    # Deploy registered model
-    # --------------------------------------------------------
+    deployment = None
 
     if auto_deploy:
-
         from deploy_model import deploy_model
 
         deployment = deploy_model()
 
-        print(
-            f"\nModel deployed successfully:"
-        )
+        print("\nModel deployed successfully:")
+        print(f"Model: {deployment['model_name']}")
+        print(f"Version: {deployment['model_version']}")
 
-        print(
-            f"Model: "
-            f"{deployment['model_name']}"
-        )
+    print("\nPipeline execution completed.")
 
-        print(
-            f"Version: "
-            f"{deployment['model_version']}"
-        )
-
-    print(
-        "\nPipeline execution completed."
-    )
+    return {
+        "dataset_path": dataset_path,
+        "target_column": target_column,
+        "deployment": deployment
+    }

@@ -20,5 +20,16 @@
             "petal width (cm)": 0.2
         },
         "prediction": 0
+    },
+    {
+        "timestamp": "2026-09-28 23:20:23.163054",
+        "mode": "single",
+        "input": {
+            "age": 28,
+            "income": 45000,
+            "city": "Jaipur",
+            "student": "no"
+        },
+        "prediction": "yes"
     }
 ]

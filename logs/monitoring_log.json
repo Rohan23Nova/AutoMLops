@@ -197,5 +197,78 @@
         "details": {
             "reason": "Data drift detected"
         }
+    },
+    {
+        "timestamp": "2026-09-28 23:08:52.888941",
+        "event": "drift_check",
+        "status": "success",
+        "details": {
+            "sepal length (cm)": {
+                "p_value": 6.399337692587972e-87,
+                "drift_detected": true
+            },
+            "sepal width (cm)": {
+                "p_value": 4.177239684184516e-79,
+                "drift_detected": true
+            },
+            "petal length (cm)": {
+                "p_value": 1.1706959500675617e-26,
+                "drift_detected": true
+            },
+            "petal width (cm)": {
+                "p_value": 2.2756141085163098e-19,
+                "drift_detected": true
+            },
+            "target": {
+                "p_value": 1.0,
+                "drift_detected": false
+            }
+        }
+    },
+    {
+        "timestamp": "2026-09-28 23:08:52.889935",
+        "event": "retraining_started",
+        "status": "success",
+        "details": {
+            "reason": "Data drift detected"
+        }
+    },
+    {
+        "timestamp": "2026-09-28 23:13:54.755601",
+        "event": "drift_check",
+        "status": "success",
+        "details": {
+            "drift_detected": false,
+            "report": {
+                "age": {
+                    "p_value": 1.0,
+                    "drift_detected": false
+                },
+                "income": {
+                    "p_value": NaN,
+                    "drift_detected": false
+                },
+                "city": {
+                    "p_value": NaN,
+                    "drift_detected": false
+                },
+                "student": {
+                    "p_value": 1.0,
+                    "drift_detected": false
+                },
+                "target": {
+                    "p_value": 1.0,
+                    "drift_detected": false
+                }
+            }
+        }
+    },
+    {
+        "timestamp": "2026-09-28 23:13:54.756502",
+        "event": "retraining_skipped",
+        "status": "success",
+        "details": {
+            "reason": "No data drift detected"
+        }
     }
 ]
