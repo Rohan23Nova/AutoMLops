@@ -1,5 +1,11 @@
 {
     "model_name": "Logistic Regression",
     "f1_score": 1.0,
-    "timestamp": "2026-04-14 03:13:34.191496"
+    "target_column": "target",
+    "dataset_path": "data/processed/iris.csv",
+    "mlflow_run_id": "7966770f66554dfd87d523d66590e082",
+    "mlflow_model_name": "AutoMLOps_Model",
+    "mlflow_model_version": 2,
+    "timestamp": "2026-09-28 22:16:57.742866",
+    "pipeline_type": "preprocessing + model"
 }

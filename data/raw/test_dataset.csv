@@ -1,0 +1,11 @@
+age,income,city,student,target
+22,25000,Jaipur,yes,no
+25,32000,Delhi,no,no
+28,45000,Jaipur,no,yes
+35,60000,Mumbai,no,yes
+21,22000,Delhi,yes,no
+42,75000,Mumbai,no,yes
+30,50000,Jaipur,no,yes
+24,,Delhi,yes,no
+38,68000,Mumbai,no,yes
+27,40000,,yes,no
