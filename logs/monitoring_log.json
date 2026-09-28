@@ -5,23 +5,23 @@
         "status": "success",
         "details": {
             "sepal length (cm)": {
-                "p_value": 1.0,
+                "p_value": "1.0",
                 "drift_detected": false
             },
             "sepal width (cm)": {
-                "p_value": 1.0,
+                "p_value": "1.0",
                 "drift_detected": false
             },
             "petal length (cm)": {
-                "p_value": 1.0,
+                "p_value": "1.0",
                 "drift_detected": false
             },
             "petal width (cm)": {
-                "p_value": 1.0,
+                "p_value": "1.0",
                 "drift_detected": false
             },
             "target": {
-                "p_value": 1.0,
+                "p_value": "1.0",
                 "drift_detected": false
             }
         }
@@ -40,23 +40,23 @@
         "status": "success",
         "details": {
             "sepal length (cm)": {
-                "p_value": 6.399337692587972e-87,
+                "p_value": "6.399337692587972e-87",
                 "drift_detected": true
             },
             "sepal width (cm)": {
-                "p_value": 4.177239684184516e-79,
+                "p_value": "4.177239684184516e-79",
                 "drift_detected": true
             },
             "petal length (cm)": {
-                "p_value": 1.1706959500675617e-26,
+                "p_value": "1.1706959500675617e-26",
                 "drift_detected": true
             },
             "petal width (cm)": {
-                "p_value": 2.2756141085163098e-19,
+                "p_value": "2.2756141085163098e-19",
                 "drift_detected": true
             },
             "target": {
-                "p_value": 1.0,
+                "p_value": "1.0",
                 "drift_detected": false
             }
         }
@@ -83,23 +83,23 @@
         "status": "success",
         "details": {
             "sepal length (cm)": {
-                "p_value": 6.399337692587972e-87,
+                "p_value": "6.399337692587972e-87",
                 "drift_detected": true
             },
             "sepal width (cm)": {
-                "p_value": 4.177239684184516e-79,
+                "p_value": "4.177239684184516e-79",
                 "drift_detected": true
             },
             "petal length (cm)": {
-                "p_value": 1.1706959500675617e-26,
+                "p_value": "1.1706959500675617e-26",
                 "drift_detected": true
             },
             "petal width (cm)": {
-                "p_value": 2.2756141085163098e-19,
+                "p_value": "2.2756141085163098e-19",
                 "drift_detected": true
             },
             "target": {
-                "p_value": 1.0,
+                "p_value": "1.0",
                 "drift_detected": false
             }
         }
@@ -126,23 +126,23 @@
         "status": "success",
         "details": {
             "sepal length (cm)": {
-                "p_value": 6.399337692587972e-87,
+                "p_value": "6.399337692587972e-87",
                 "drift_detected": true
             },
             "sepal width (cm)": {
-                "p_value": 4.177239684184516e-79,
+                "p_value": "4.177239684184516e-79",
                 "drift_detected": true
             },
             "petal length (cm)": {
-                "p_value": 1.1706959500675617e-26,
+                "p_value": "1.1706959500675617e-26",
                 "drift_detected": true
             },
             "petal width (cm)": {
-                "p_value": 2.2756141085163098e-19,
+                "p_value": "2.2756141085163098e-19",
                 "drift_detected": true
             },
             "target": {
-                "p_value": 1.0,
+                "p_value": "1.0",
                 "drift_detected": false
             }
         }
@@ -169,23 +169,23 @@
         "status": "success",
         "details": {
             "sepal length (cm)": {
-                "p_value": 6.399337692587972e-87,
+                "p_value": "6.399337692587972e-87",
                 "drift_detected": true
             },
             "sepal width (cm)": {
-                "p_value": 4.177239684184516e-79,
+                "p_value": "4.177239684184516e-79",
                 "drift_detected": true
             },
             "petal length (cm)": {
-                "p_value": 1.1706959500675617e-26,
+                "p_value": "1.1706959500675617e-26",
                 "drift_detected": true
             },
             "petal width (cm)": {
-                "p_value": 2.2756141085163098e-19,
+                "p_value": "2.2756141085163098e-19",
                 "drift_detected": true
             },
             "target": {
-                "p_value": 1.0,
+                "p_value": "1.0",
                 "drift_detected": false
             }
         }
@@ -204,23 +204,23 @@
         "status": "success",
         "details": {
             "sepal length (cm)": {
-                "p_value": 6.399337692587972e-87,
+                "p_value": "6.399337692587972e-87",
                 "drift_detected": true
             },
             "sepal width (cm)": {
-                "p_value": 4.177239684184516e-79,
+                "p_value": "4.177239684184516e-79",
                 "drift_detected": true
             },
             "petal length (cm)": {
-                "p_value": 1.1706959500675617e-26,
+                "p_value": "1.1706959500675617e-26",
                 "drift_detected": true
             },
             "petal width (cm)": {
-                "p_value": 2.2756141085163098e-19,
+                "p_value": "2.2756141085163098e-19",
                 "drift_detected": true
             },
             "target": {
-                "p_value": 1.0,
+                "p_value": "1.0",
                 "drift_detected": false
             }
         }
@@ -241,23 +241,23 @@
             "drift_detected": false,
             "report": {
                 "age": {
-                    "p_value": 1.0,
+                    "p_value": "1.0",
                     "drift_detected": false
                 },
                 "income": {
-                    "p_value": NaN,
+                    "p_value": null,
                     "drift_detected": false
                 },
                 "city": {
-                    "p_value": NaN,
+                    "p_value": null,
                     "drift_detected": false
                 },
                 "student": {
-                    "p_value": 1.0,
+                    "p_value": "1.0",
                     "drift_detected": false
                 },
                 "target": {
-                    "p_value": 1.0,
+                    "p_value": "1.0",
                     "drift_detected": false
                 }
             }
@@ -279,23 +279,23 @@
             "drift_detected": false,
             "report": {
                 "age": {
-                    "p_value": 1.0,
+                    "p_value": "1.0",
                     "drift_detected": false
                 },
                 "income": {
-                    "p_value": NaN,
+                    "p_value": null,
                     "drift_detected": false
                 },
                 "city": {
-                    "p_value": NaN,
+                    "p_value": null,
                     "drift_detected": false
                 },
                 "student": {
-                    "p_value": 1.0,
+                    "p_value": "1.0",
                     "drift_detected": false
                 },
                 "target": {
-                    "p_value": 1.0,
+                    "p_value": "1.0",
                     "drift_detected": false
                 }
             }
@@ -326,23 +326,23 @@
             "drift_detected": false,
             "report": {
                 "age": {
-                    "p_value": 1.0,
+                    "p_value": "1.0",
                     "drift_detected": false
                 },
                 "income": {
-                    "p_value": NaN,
+                    "p_value": null,
                     "drift_detected": false
                 },
                 "city": {
-                    "p_value": NaN,
+                    "p_value": null,
                     "drift_detected": false
                 },
                 "student": {
-                    "p_value": 1.0,
+                    "p_value": "1.0",
                     "drift_detected": false
                 },
                 "target": {
-                    "p_value": 1.0,
+                    "p_value": "1.0",
                     "drift_detected": false
                 }
             }
@@ -364,23 +364,23 @@
             "drift_detected": false,
             "report": {
                 "age": {
-                    "p_value": 1.0,
+                    "p_value": "1.0",
                     "drift_detected": false
                 },
                 "income": {
-                    "p_value": NaN,
+                    "p_value": null,
                     "drift_detected": false
                 },
                 "city": {
-                    "p_value": NaN,
+                    "p_value": null,
                     "drift_detected": false
                 },
                 "student": {
-                    "p_value": 1.0,
+                    "p_value": "1.0",
                     "drift_detected": false
                 },
                 "target": {
-                    "p_value": 1.0,
+                    "p_value": "1.0",
                     "drift_detected": false
                 }
             }
@@ -411,23 +411,23 @@
             "drift_detected": false,
             "report": {
                 "age": {
-                    "p_value": 1.0,
+                    "p_value": "1.0",
                     "drift_detected": false
                 },
                 "income": {
-                    "p_value": NaN,
+                    "p_value": null,
                     "drift_detected": false
                 },
                 "city": {
-                    "p_value": NaN,
+                    "p_value": null,
                     "drift_detected": false
                 },
                 "student": {
-                    "p_value": 1.0,
+                    "p_value": "1.0",
                     "drift_detected": false
                 },
                 "target": {
-                    "p_value": 1.0,
+                    "p_value": "1.0",
                     "drift_detected": false
                 }
             }
