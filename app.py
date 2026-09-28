@@ -1,3 +1,12 @@
+import json
+import logging
+import os
+import threading
+import time
+
+import mlflow
+import pandas as pd
+
 from fastapi import (
     FastAPI,
     Depends,
@@ -7,6 +16,8 @@ from fastapi import (
 )
 
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import Response
+
 from fastapi.security import (
     OAuth2PasswordBearer,
     OAuth2PasswordRequestForm
@@ -16,18 +27,15 @@ from pydantic import BaseModel
 
 from jose import JWTError, jwt
 
-import json
-import os
-import logging
-import threading
-
-import pandas as pd
-import mlflow
-mlflow.set_tracking_uri(
-    "sqlite:///mlflow.db"
+from prometheus_client import (
+    Counter,
+    Histogram,
+    Gauge,
+    generate_latest
 )
 
 from main_pipeline import run_pipeline
+
 from auth import (
     create_access_token,
     verify_user,
@@ -42,15 +50,73 @@ from monitoring import (
 
 
 # ============================================================
+# DIRECTORY SETUP
+# ============================================================
+
+os.makedirs("logs", exist_ok=True)
+os.makedirs("models", exist_ok=True)
+
+
+# ============================================================
+# MLFLOW CONFIGURATION
+# ============================================================
+
+mlflow.set_tracking_uri("sqlite:///mlflow.db")
+
+mlflow.set_experiment(
+    "AutoMLOps_Inference"
+)
+
+
+# ============================================================
 # APP CONFIGURATION
 # ============================================================
 
 app = FastAPI(
     title="AutoMLOps API",
     description="Automated Machine Learning Operations API",
-    version="2.0"
+    version="2.1"
 )
 
+
+# ============================================================
+# PROMETHEUS METRICS
+# ============================================================
+
+prediction_counter = Counter(
+    "automlops_predictions_total",
+    "Total number of successful single predictions"
+)
+
+prediction_error_counter = Counter(
+    "automlops_prediction_errors_total",
+    "Total number of prediction errors"
+)
+
+batch_prediction_counter = Counter(
+    "automlops_batch_predictions_total",
+    "Total number of successful batch prediction requests"
+)
+
+prediction_latency = Histogram(
+    "automlops_prediction_latency_seconds",
+    "Prediction request latency in seconds"
+)
+
+batch_prediction_latency = Histogram(
+    "automlops_batch_prediction_latency_seconds",
+    "Batch prediction request latency in seconds"
+)
+
+model_version_gauge = Gauge(
+    "automlops_model_version",
+    "Currently deployed model version"
+)
+
+
+# ============================================================
+# CORS
+# ============================================================
 
 app.add_middleware(
     CORSMiddleware,
@@ -63,6 +129,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+# ============================================================
+# AUTHENTICATION
+# ============================================================
 
 oauth2_scheme = OAuth2PasswordBearer(
     tokenUrl="login"
@@ -81,67 +151,49 @@ logging.basicConfig(
 
 
 # ============================================================
-# MLFLOW
-# ============================================================
-
-mlflow.set_experiment(
-    "AutoMLOps_Inference"
-)
-
-
-
-# ============================================================
-# LOAD REGISTERED MODEL FROM MLFLOW
-# ============================================================
-
-
-
-# ============================================================
 # LOAD DEPLOYED MODEL INFORMATION
 # ============================================================
 
 DEPLOYMENT_PATH = "models/deployment.json"
 
-if not os.path.exists(DEPLOYMENT_PATH):
 
+if not os.path.exists(DEPLOYMENT_PATH):
     raise FileNotFoundError(
         "No deployed model found. "
         "Run deploy_model.py first."
     )
 
-with open(
-    DEPLOYMENT_PATH,
-    "r"
-) as f:
 
+with open(DEPLOYMENT_PATH, "r") as f:
     deployment = json.load(f)
 
 
-MODEL_NAME = deployment[
-    "model_name"
-]
+MODEL_NAME = deployment["model_name"]
+MODEL_VERSION = deployment["model_version"]
+MODEL_STATUS = deployment["status"]
 
-MODEL_VERSION = deployment[
-    "model_version"
-]
-
-MODEL_STATUS = deployment[
-    "status"
-]
 
 if MODEL_STATUS != "deployed":
-
     raise RuntimeError(
         f"Model status is '{MODEL_STATUS}', "
         "not 'deployed'."
     )
+
+
 MODEL_URI = (
     f"models:/{MODEL_NAME}/{MODEL_VERSION}"
 )
+
+
 print("\n========== MODEL LOADING ==========")
 print(f"Model: {MODEL_NAME}")
 print(f"Version: {MODEL_VERSION}")
 print(f"URI: {MODEL_URI}")
+
+
+# ============================================================
+# LOAD MODEL FROM MLFLOW REGISTRY
+# ============================================================
 
 model = mlflow.sklearn.load_model(
     MODEL_URI
@@ -150,14 +202,20 @@ model = mlflow.sklearn.load_model(
 print("Registered model loaded successfully.")
 
 
+# Set Prometheus gauge
+try:
+    model_version_gauge.set(float(MODEL_VERSION))
+except (TypeError, ValueError):
+    model_version_gauge.set(0)
+
+
 # ============================================================
-# AUTHENTICATION
+# AUTHENTICATION FUNCTION
 # ============================================================
 
 def get_current_user(
     token: str = Depends(oauth2_scheme)
 ):
-
     try:
 
         payload = jwt.decode(
@@ -207,7 +265,10 @@ class PredictionInput(BaseModel):
 def home():
 
     return {
-        "message": "AutoMLOps API is running"
+        "message": "AutoMLOps API is running",
+        "model": MODEL_NAME,
+        "version": MODEL_VERSION,
+        "status": MODEL_STATUS
     }
 
 
@@ -245,7 +306,7 @@ def login(
 
 
 # ============================================================
-# GENERIC SINGLE PREDICTION
+# SINGLE PREDICTION
 # ============================================================
 
 @app.post("/predict")
@@ -254,10 +315,12 @@ def predict(
     user: str = Depends(get_current_user)
 ):
 
+    start_time = time.time()
+
     try:
 
         # --------------------------------------------------------
-        # Convert incoming dictionary to DataFrame
+        # Convert input dictionary to DataFrame
         # --------------------------------------------------------
 
         df = pd.DataFrame(
@@ -265,7 +328,7 @@ def predict(
         )
 
         # --------------------------------------------------------
-        # Run complete saved pipeline
+        # Run deployed model
         # --------------------------------------------------------
 
         prediction = model.predict(df)
@@ -275,6 +338,16 @@ def predict(
         # Convert NumPy types into normal Python types
         if hasattr(pred_class, "item"):
             pred_class = pred_class.item()
+
+        # --------------------------------------------------------
+        # Prometheus metrics
+        # --------------------------------------------------------
+
+        prediction_counter.inc()
+
+        prediction_latency.observe(
+            time.time() - start_time
+        )
 
         # --------------------------------------------------------
         # Log prediction
@@ -293,18 +366,23 @@ def predict(
         )
 
         return {
-            "prediction": pred_class
+            "prediction": pred_class,
+            "model_name": MODEL_NAME,
+            "model_version": MODEL_VERSION
         }
 
     except Exception as e:
+
+        prediction_error_counter.inc()
 
         logging.error(
             f"Prediction error: {str(e)}"
         )
 
-        return {
-            "error": str(e)
-        }
+        raise HTTPException(
+            status_code=400,
+            detail=str(e)
+        )
 
 
 # ============================================================
@@ -316,6 +394,8 @@ def batch_predict(
     file: UploadFile = File(...),
     user: str = Depends(get_current_user)
 ):
+
+    start_time = time.time()
 
     try:
 
@@ -338,12 +418,22 @@ def batch_predict(
             )
 
         # --------------------------------------------------------
-        # Run complete pipeline
+        # Run deployed model
         # --------------------------------------------------------
 
         predictions = model.predict(df)
 
         predictions_list = predictions.tolist()
+
+        # --------------------------------------------------------
+        # Prometheus metrics
+        # --------------------------------------------------------
+
+        batch_prediction_counter.inc()
+
+        batch_prediction_latency.observe(
+            time.time() - start_time
+        )
 
         # --------------------------------------------------------
         # Log prediction
@@ -375,18 +465,23 @@ def batch_predict(
 
         return {
             "rows_received": len(df),
-            "predictions": predictions_list
+            "predictions": predictions_list,
+            "model_name": MODEL_NAME,
+            "model_version": MODEL_VERSION
         }
 
     except Exception as e:
+
+        prediction_error_counter.inc()
 
         logging.error(
             f"Batch prediction error: {str(e)}"
         )
 
-        return {
-            "error": str(e)
-        }
+        raise HTTPException(
+            status_code=400,
+            detail=str(e)
+        )
 
 
 # ============================================================
@@ -398,8 +493,42 @@ def retrain(
     user: str = Depends(get_current_user)
 ):
 
+    def retrain_task():
+
+        try:
+
+            run_pipeline(
+                dataset_path="data/processed/current.csv",
+                target_column="target",
+                auto_deploy=True
+            )
+
+            log_event(
+                event_type="manual_retraining",
+                details={
+                    "triggered_by": user
+                },
+                status="success"
+            )
+
+        except Exception as e:
+
+            logging.error(
+                f"Retraining error: {str(e)}"
+            )
+
+            log_event(
+                event_type="manual_retraining",
+                details={
+                    "triggered_by": user,
+                    "error": str(e)
+                },
+                status="failed"
+            )
+
+
     thread = threading.Thread(
-        target=run_pipeline
+        target=retrain_task
     )
 
     thread.start()
@@ -414,14 +543,19 @@ def retrain(
 # ============================================================
 
 @app.post("/check-drift")
-def check_drift():
+def check_drift(
+    user: str = Depends(get_current_user)
+):
 
     from main_pipeline import check_and_retrain
 
-    check_and_retrain()
+    result = check_and_retrain(
+        auto_deploy=True
+    )
 
     return {
-        "message": "Drift check completed"
+        "message": "Drift check completed",
+        "result": result
     }
 
 
@@ -449,6 +583,11 @@ def get_logs(
 
         return []
 
+
+# ============================================================
+# MODEL INFORMATION
+# ============================================================
+
 @app.get("/model-info")
 def model_info():
 
@@ -463,3 +602,16 @@ def model_info():
             "deployment_timestamp"
         )
     }
+
+
+# ============================================================
+# PROMETHEUS METRICS
+# ============================================================
+
+@app.get("/metrics")
+def metrics():
+
+    return Response(
+        content=generate_latest(),
+        media_type="text/plain"
+    )
