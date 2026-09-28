@@ -1,1 +1,80 @@
-{"timestamp": "2026-04-14 17:27:05.565343", "event": "drift_detected", "status": "retraining_triggered", "details": {"drift": true}}
+[
+    {
+        "timestamp": "2026-09-28 22:40:13.343842",
+        "event": "drift_check",
+        "status": "success",
+        "details": {
+            "sepal length (cm)": {
+                "p_value": 1.0,
+                "drift_detected": false
+            },
+            "sepal width (cm)": {
+                "p_value": 1.0,
+                "drift_detected": false
+            },
+            "petal length (cm)": {
+                "p_value": 1.0,
+                "drift_detected": false
+            },
+            "petal width (cm)": {
+                "p_value": 1.0,
+                "drift_detected": false
+            },
+            "target": {
+                "p_value": 1.0,
+                "drift_detected": false
+            }
+        }
+    },
+    {
+        "timestamp": "2026-09-28 22:40:13.344277",
+        "event": "retraining_skipped",
+        "status": "success",
+        "details": {
+            "reason": "No data drift detected"
+        }
+    },
+    {
+        "timestamp": "2026-09-28 22:41:59.314043",
+        "event": "drift_check",
+        "status": "success",
+        "details": {
+            "sepal length (cm)": {
+                "p_value": 6.399337692587972e-87,
+                "drift_detected": true
+            },
+            "sepal width (cm)": {
+                "p_value": 4.177239684184516e-79,
+                "drift_detected": true
+            },
+            "petal length (cm)": {
+                "p_value": 1.1706959500675617e-26,
+                "drift_detected": true
+            },
+            "petal width (cm)": {
+                "p_value": 2.2756141085163098e-19,
+                "drift_detected": true
+            },
+            "target": {
+                "p_value": 1.0,
+                "drift_detected": false
+            }
+        }
+    },
+    {
+        "timestamp": "2026-09-28 22:41:59.314569",
+        "event": "retraining_started",
+        "status": "success",
+        "details": {
+            "reason": "Data drift detected"
+        }
+    },
+    {
+        "timestamp": "2026-09-28 22:42:05.739032",
+        "event": "retraining_completed",
+        "status": "success",
+        "details": {
+            "reason": "Data drift detected"
+        }
+    }
+]

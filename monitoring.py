@@ -34,15 +34,14 @@ def load_json_array(file_path):
 
 
 def save_json_array(file_path, data):
-    """
-    Save a Python list as formatted JSON.
-    """
-
     with open(file_path, "w") as f:
         json.dump(
             data,
             f,
-            indent=4
+            indent=4,
+            default=lambda obj: obj.item()
+            if hasattr(obj, "item")
+            else str(obj)
         )
 
 

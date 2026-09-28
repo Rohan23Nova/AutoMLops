@@ -1,7 +1,7 @@
 {
     "model_name": "AutoMLOps_Model",
-    "model_version": "2",
+    "model_version": "3",
     "status": "deployed",
-    "source_run_id": "7966770f66554dfd87d523d66590e082",
-    "deployment_timestamp": "2026-09-28T22:34:09.082126"
+    "source_run_id": "1efe62a486d749c9b364c2de32d7f97b",
+    "deployment_timestamp": "2026-09-28T22:42:05.738503"
 }

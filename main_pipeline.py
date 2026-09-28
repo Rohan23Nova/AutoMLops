@@ -17,7 +17,6 @@ DEFAULT_TARGET = "target"
 # ============================================================
 # RETRAINING / DRIFT DETECTION
 # ============================================================
-
 def check_and_retrain():
 
     reference = pd.read_csv(
@@ -43,43 +42,105 @@ def check_and_retrain():
         report
     )
 
-    if drift_found:
+    # --------------------------------------------------------
+    # No drift
+    # --------------------------------------------------------
 
-        print(
-            "\nDrift detected. "
-            "Retraining model..."
-        )
-
-        run_pipeline()
-
-    else:
+    if not drift_found:
 
         print(
             "\nNo drift detected."
         )
 
+        log_event(
+            "retraining_skipped",
+            {
+                "reason": "No data drift detected"
+            }
+        )
 
+        return {
+            "drift_detected": False,
+            "retraining_triggered": False,
+            "message": "No drift detected"
+        }
+
+    # --------------------------------------------------------
+    # Drift detected
+    # --------------------------------------------------------
+
+    print(
+        "\nDrift detected."
+    )
+
+    print(
+        "Starting automated retraining..."
+    )
+
+    log_event(
+        "retraining_started",
+        {
+            "reason": "Data drift detected"
+        }
+    )
+
+    try:
+
+        run_pipeline(
+            auto_deploy=True
+        )
+
+        log_event(
+            "retraining_completed",
+            {
+                "reason": "Data drift detected"
+            }
+        )
+
+        return {
+            "drift_detected": True,
+            "retraining_triggered": True,
+            "message": "Retraining and deployment completed"
+        }
+
+    except Exception as e:
+
+        log_event(
+            "retraining_failed",
+            {
+                "error": str(e)
+            },
+            status="failed"
+        )
+
+        print(
+            f"\nRetraining failed: {e}"
+        )
+
+        return {
+            "drift_detected": True,
+            "retraining_triggered": True,
+            "message": "Retraining failed",
+            "error": str(e)
+        }
 # ============================================================
 # MAIN AUTOMATED ML PIPELINE
 # ============================================================
 
 def run_pipeline(
     dataset_path=None,
-    target_column=None
+    target_column=None,
+    auto_deploy=True
 ):
     """
-    Execute the complete AutoMLOps pipeline.
+    Execute the complete AutoMLOps training pipeline.
 
-    Parameters
-    ----------
-    dataset_path : str, optional
-        Path to the dataset.
-
-    target_column : str, optional
-        Name of the target column.
-
-    If no values are provided, the existing Iris
-    pipeline is used for backward compatibility.
+    Steps:
+    1. Prepare dataset
+    2. Train multiple models
+    3. Select best model
+    4. Register model in MLflow
+    5. Optionally deploy the registered version
     """
 
     # --------------------------------------------------------
@@ -106,7 +167,7 @@ def run_pipeline(
     )
 
     # --------------------------------------------------------
-    # Select best model
+    # Select and register best model
     # --------------------------------------------------------
 
     select_and_save_best_model(
@@ -115,15 +176,30 @@ def run_pipeline(
         dataset_path=dataset_path
     )
 
+    # --------------------------------------------------------
+    # Deploy registered model
+    # --------------------------------------------------------
+
+    if auto_deploy:
+
+        from deploy_model import deploy_model
+
+        deployment = deploy_model()
+
+        print(
+            f"\nModel deployed successfully:"
+        )
+
+        print(
+            f"Model: "
+            f"{deployment['model_name']}"
+        )
+
+        print(
+            f"Version: "
+            f"{deployment['model_version']}"
+        )
+
     print(
         "\nPipeline execution completed."
     )
-
-
-# ============================================================
-# ENTRY POINT
-# ============================================================
-
-if __name__ == "__main__":
-
-    run_pipeline()
