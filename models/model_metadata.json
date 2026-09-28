@@ -3,9 +3,9 @@
     "f1_score": 1.0,
     "target_column": "target",
     "dataset_path": "data/processed/iris.csv",
-    "mlflow_run_id": "1efe62a486d749c9b364c2de32d7f97b",
+    "mlflow_run_id": "5910ed9c5af44cb2a4b001f8a9e2075d",
     "mlflow_model_name": "AutoMLOps_Model",
-    "mlflow_model_version": 3,
-    "timestamp": "2026-09-28 22:42:05.735077",
+    "mlflow_model_version": 5,
+    "timestamp": "2026-09-28 22:59:16.320085",
     "pipeline_type": "preprocessing + model"
 }

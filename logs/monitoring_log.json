@@ -76,5 +76,91 @@
         "details": {
             "reason": "Data drift detected"
         }
+    },
+    {
+        "timestamp": "2026-09-28 22:57:41.154280",
+        "event": "drift_check",
+        "status": "success",
+        "details": {
+            "sepal length (cm)": {
+                "p_value": 6.399337692587972e-87,
+                "drift_detected": true
+            },
+            "sepal width (cm)": {
+                "p_value": 4.177239684184516e-79,
+                "drift_detected": true
+            },
+            "petal length (cm)": {
+                "p_value": 1.1706959500675617e-26,
+                "drift_detected": true
+            },
+            "petal width (cm)": {
+                "p_value": 2.2756141085163098e-19,
+                "drift_detected": true
+            },
+            "target": {
+                "p_value": 1.0,
+                "drift_detected": false
+            }
+        }
+    },
+    {
+        "timestamp": "2026-09-28 22:57:41.154963",
+        "event": "retraining_started",
+        "status": "success",
+        "details": {
+            "reason": "Data drift detected"
+        }
+    },
+    {
+        "timestamp": "2026-09-28 22:57:47.080543",
+        "event": "retraining_completed",
+        "status": "success",
+        "details": {
+            "reason": "Data drift detected"
+        }
+    },
+    {
+        "timestamp": "2026-09-28 22:59:10.519632",
+        "event": "drift_check",
+        "status": "success",
+        "details": {
+            "sepal length (cm)": {
+                "p_value": 6.399337692587972e-87,
+                "drift_detected": true
+            },
+            "sepal width (cm)": {
+                "p_value": 4.177239684184516e-79,
+                "drift_detected": true
+            },
+            "petal length (cm)": {
+                "p_value": 1.1706959500675617e-26,
+                "drift_detected": true
+            },
+            "petal width (cm)": {
+                "p_value": 2.2756141085163098e-19,
+                "drift_detected": true
+            },
+            "target": {
+                "p_value": 1.0,
+                "drift_detected": false
+            }
+        }
+    },
+    {
+        "timestamp": "2026-09-28 22:59:10.520219",
+        "event": "retraining_started",
+        "status": "success",
+        "details": {
+            "reason": "Data drift detected"
+        }
+    },
+    {
+        "timestamp": "2026-09-28 22:59:16.323325",
+        "event": "retraining_completed",
+        "status": "success",
+        "details": {
+            "reason": "Data drift detected"
+        }
     }
 ]
