@@ -31,5 +31,16 @@
             "student": "no"
         },
         "prediction": "yes"
+    },
+    {
+        "timestamp": "2026-09-28 23:25:37.679853",
+        "mode": "single",
+        "input": {
+            "age": 28,
+            "income": 45000,
+            "city": "Jaipur",
+            "student": "no"
+        },
+        "prediction": "yes"
     }
 ]
