@@ -64,5 +64,68 @@
             "student": "no"
         },
         "prediction": "yes"
+    },
+    {
+        "timestamp": "2026-09-29 00:40:31.183506",
+        "mode": "single",
+        "input": {
+            "age": 28,
+            "income": 45000,
+            "city": "Jaipur",
+            "student": "no"
+        },
+        "prediction": "yes"
+    },
+    {
+        "timestamp": "2026-09-29 00:42:34.376775",
+        "mode": "batch",
+        "input": {
+            "filename": "batch_test.csv",
+            "rows": 5
+        },
+        "prediction": [
+            "yes",
+            "no",
+            "yes",
+            "no",
+            "yes"
+        ]
+    },
+    {
+        "timestamp": "2026-09-29 00:44:30.059167",
+        "mode": "single",
+        "input": {
+            "age": 28,
+            "income": 45555,
+            "city": "Jaipur",
+            "student": "no"
+        },
+        "prediction": "yes"
+    },
+    {
+        "timestamp": "2026-09-29 00:46:41.302002",
+        "mode": "single",
+        "input": {
+            "age": 30,
+            "income": 60000,
+            "city": "New York",
+            "student": "yes"
+        },
+        "prediction": "yes"
+    },
+    {
+        "timestamp": "2026-09-29 00:47:00.654439",
+        "mode": "batch",
+        "input": {
+            "filename": "batch_test.csv",
+            "rows": 5
+        },
+        "prediction": [
+            "yes",
+            "no",
+            "yes",
+            "no",
+            "yes"
+        ]
     }
 ]

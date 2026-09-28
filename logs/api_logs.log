@@ -9,3 +9,9 @@
 2026-09-28 23:25:37,680 - User: admin | Input: {'age': 28, 'income': 45000, 'city': 'Jaipur', 'student': 'no'} | Prediction: yes
 2026-09-28 23:34:04,872 - User: admin | Input: {'age': 28, 'income': 45000, 'city': 'Jaipur', 'student': 'no'} | Prediction: yes
 2026-09-28 23:34:54,595 - User: admin | Input: {'age': 28, 'income': 45000, 'city': 'Jaipur', 'student': 'no'} | Prediction: yes
+2026-09-29 00:40:31,185 - User: admin | Input: {'age': 28, 'income': 45000, 'city': 'Jaipur', 'student': 'no'} | Prediction: yes
+2026-09-29 00:41:09,133 - Batch prediction error: columns are missing: {'income', 'age', 'city', 'student'}
+2026-09-29 00:42:34,379 - User: admin | Batch file: batch_test.csv | Rows: 5
+2026-09-29 00:44:30,060 - User: admin | Input: {'age': 28, 'income': 45555, 'city': 'Jaipur', 'student': 'no'} | Prediction: yes
+2026-09-29 00:46:41,303 - User: admin | Input: {'age': 30, 'income': 60000, 'city': 'New York', 'student': 'yes'} | Prediction: yes
+2026-09-29 00:47:00,657 - User: admin | Batch file: batch_test.csv | Rows: 5

@@ -308,5 +308,137 @@
         "details": {
             "reason": "No data drift detected"
         }
+    },
+    {
+        "timestamp": "2026-09-29 00:42:34.378101",
+        "event": "batch_prediction",
+        "status": "success",
+        "details": {
+            "filename": "batch_test.csv",
+            "rows": 5
+        }
+    },
+    {
+        "timestamp": "2026-09-29 00:45:36.566258",
+        "event": "drift_check",
+        "status": "success",
+        "details": {
+            "drift_detected": false,
+            "report": {
+                "age": {
+                    "p_value": 1.0,
+                    "drift_detected": false
+                },
+                "income": {
+                    "p_value": NaN,
+                    "drift_detected": false
+                },
+                "city": {
+                    "p_value": NaN,
+                    "drift_detected": false
+                },
+                "student": {
+                    "p_value": 1.0,
+                    "drift_detected": false
+                },
+                "target": {
+                    "p_value": 1.0,
+                    "drift_detected": false
+                }
+            }
+        }
+    },
+    {
+        "timestamp": "2026-09-29 00:45:36.568274",
+        "event": "retraining_skipped",
+        "status": "success",
+        "details": {
+            "reason": "No data drift detected"
+        }
+    },
+    {
+        "timestamp": "2026-09-29 00:46:10.764858",
+        "event": "drift_check",
+        "status": "success",
+        "details": {
+            "drift_detected": false,
+            "report": {
+                "age": {
+                    "p_value": 1.0,
+                    "drift_detected": false
+                },
+                "income": {
+                    "p_value": NaN,
+                    "drift_detected": false
+                },
+                "city": {
+                    "p_value": NaN,
+                    "drift_detected": false
+                },
+                "student": {
+                    "p_value": 1.0,
+                    "drift_detected": false
+                },
+                "target": {
+                    "p_value": 1.0,
+                    "drift_detected": false
+                }
+            }
+        }
+    },
+    {
+        "timestamp": "2026-09-29 00:46:10.766450",
+        "event": "retraining_skipped",
+        "status": "success",
+        "details": {
+            "reason": "No data drift detected"
+        }
+    },
+    {
+        "timestamp": "2026-09-29 00:47:00.655733",
+        "event": "batch_prediction",
+        "status": "success",
+        "details": {
+            "filename": "batch_test.csv",
+            "rows": 5
+        }
+    },
+    {
+        "timestamp": "2026-09-29 00:47:19.115173",
+        "event": "drift_check",
+        "status": "success",
+        "details": {
+            "drift_detected": false,
+            "report": {
+                "age": {
+                    "p_value": 1.0,
+                    "drift_detected": false
+                },
+                "income": {
+                    "p_value": NaN,
+                    "drift_detected": false
+                },
+                "city": {
+                    "p_value": NaN,
+                    "drift_detected": false
+                },
+                "student": {
+                    "p_value": 1.0,
+                    "drift_detected": false
+                },
+                "target": {
+                    "p_value": 1.0,
+                    "drift_detected": false
+                }
+            }
+        }
+    },
+    {
+        "timestamp": "2026-09-29 00:47:19.117449",
+        "event": "retraining_skipped",
+        "status": "success",
+        "details": {
+            "reason": "No data drift detected"
+        }
     }
 ]

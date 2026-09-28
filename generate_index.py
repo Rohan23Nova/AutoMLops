@@ -1,4 +1,6 @@
-<!DOCTYPE html>
+import json
+
+html_content = """<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -815,7 +817,7 @@
     }
 
     function parsePrometheus(text) {
-        const lines = text.split('\n');
+        const lines = text.split('\\n');
         const metrics = {};
         for(let line of lines) {
             if(!line || line.startsWith('#')) continue;
@@ -916,32 +918,22 @@
             });
             if(res.status === 401) { logout(); return; }
             if(res.ok) {
-                const logs = await res.json();
+                const data = await res.json();
+                const logs = data.logs || [];
                 const list = document.getElementById('events-list');
                 
-                if(!Array.isArray(logs) || logs.length === 0) return;
+                if(logs.length === 0) return;
                 list.innerHTML = '';
                 
                 logs.slice(-6).reverse().forEach(log => {
                     let timeStr = "--:--:--";
-                    let msgStr = "Event";
+                    let msgStr = log;
                     
-                    if (log.timestamp) {
-                        const parts = log.timestamp.split(' ');
-                        if (parts.length > 1) {
-                            timeStr = parts[1].split('.')[0];
-                        } else {
-                            timeStr = log.timestamp;
-                        }
-                    }
-                    
-                    if (log.event) {
-                        msgStr = log.event.replace(/_/g, ' ');
-                        msgStr = msgStr.charAt(0).toUpperCase() + msgStr.slice(1);
-                        if (log.status === 'error') msgStr = `<span style="color:var(--error)">${msgStr}</span>`;
-                        else if (log.status === 'success') msgStr = `<span style="color:var(--success)">${msgStr}</span>`;
-                    } else if (typeof log === 'string') {
-                        msgStr = log;
+                    const match = log.match(/^(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2})/);
+                    if(match) {
+                        timeStr = match[1].split(' ')[1];
+                        msgStr = log.substring(match[0].length).trim();
+                        msgStr = msgStr.replace(/^[\\|\\-\\s]+/, '').replace(/^(INFO|ERROR|WARNING):?\\s*/i, '');
                     }
                     
                     const item = document.createElement('div');
@@ -1114,3 +1106,8 @@
   </script>
 </body>
 </html>
+"""
+
+with open("index.html", "w") as f:
+    f.write(html_content)
+
