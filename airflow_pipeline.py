@@ -20,7 +20,12 @@ def run_automlops_pipeline():
     print("\n========== AUTOMLOPS PROJECT DIRECTORY ==========")
     print(os.getcwd())
 
-    result = check_and_retrain()
+    result = check_and_retrain(
+        reference_path="data/processed/reference.csv",
+        current_path="data/processed/current.csv",
+        target_column="income",
+        auto_deploy=True
+    )
 
     print("\n========== AUTOMLOPS RESULT ==========")
     print(result)
