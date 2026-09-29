@@ -551,36 +551,105 @@
                 <div class="grid-2" id="grid-predictions">
                    <div class="card">
                      <div class="card-title">Run Prediction</div>
-                     <form id="predict-form">
-                        <div class="grid-2" style="gap:16px;">
-                          <div class="form-group">
-                            <label>Age</label>
-                            <input type="number" id="pred-age" placeholder="e.g. 28" required>
-                          </div>
-                          <div class="form-group">
-                            <label>Income</label>
-                            <input type="number" id="pred-income" placeholder="e.g. 50000" required>
-                          </div>
-                          <div class="form-group">
-                            <label>City</label>
-                            <input type="text" id="pred-city" placeholder="e.g. New York" required>
-                          </div>
-                          <div class="form-group">
-                            <label>Student</label>
-                            <input type="text" id="pred-student" placeholder="Yes / No" required>
-                          </div>
+                     <form id="predict-form" style="display:flex; flex-direction:column; gap:24px;">
+                        <div>
+                            <div style="font-size:11px; color:var(--text-sec); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:12px; font-weight:600;">Personal / Demographic</div>
+                            <div class="grid-2" style="gap:16px;">
+                                <div class="form-group" style="margin-bottom:0;">
+                                    <label>Age</label>
+                                    <input type="number" id="pred-age" value="39" required>
+                                </div>
+                                <div class="form-group" style="margin-bottom:0;">
+                                    <label>Sex</label>
+                                    <select id="pred-sex" style="width: 100%; background-color: var(--bg); border: 1px solid var(--border); color: var(--text-pri); padding: 9px 12px; border-radius: 6px; font-size: 13px;">
+                                        <option value="Male" selected>Male</option>
+                                        <option value="Female">Female</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" style="margin-bottom:0;">
+                                    <label>Race</label>
+                                    <input type="text" id="pred-race" value="White" required>
+                                </div>
+                                <div class="form-group" style="margin-bottom:0;">
+                                    <label>Relationship</label>
+                                    <input type="text" id="pred-relationship" value="Not-in-family" required>
+                                </div>
+                            </div>
                         </div>
-                        <button type="submit">Run Prediction</button>
+
+                        <div style="border-top:1px solid var(--border); padding-top:24px;">
+                            <div style="font-size:11px; color:var(--text-sec); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:12px; font-weight:600;">Employment / Education</div>
+                            <div class="grid-2" style="gap:16px;">
+                                <div class="form-group" style="margin-bottom:0;">
+                                    <label>Workclass</label>
+                                    <input type="text" id="pred-workclass" value="State-gov" required>
+                                </div>
+                                <div class="form-group" style="margin-bottom:0;">
+                                    <label>Education</label>
+                                    <input type="text" id="pred-education" value="Bachelors" required>
+                                </div>
+                                <div class="form-group" style="margin-bottom:0;">
+                                    <label>Education Number</label>
+                                    <input type="number" id="pred-education-num" value="13" required>
+                                </div>
+                                <div class="form-group" style="margin-bottom:0;">
+                                    <label>Occupation</label>
+                                    <input type="text" id="pred-occupation" value="Adm-clerical" required>
+                                </div>
+                                <div class="form-group" style="margin-bottom:0;">
+                                    <label>Marital Status</label>
+                                    <input type="text" id="pred-marital-status" value="Never-married" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="border-top:1px solid var(--border); padding-top:24px;">
+                            <div style="font-size:11px; color:var(--text-sec); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:12px; font-weight:600;">Financial / Work</div>
+                            <div class="grid-2" style="gap:16px;">
+                                <div class="form-group" style="margin-bottom:0;">
+                                    <label>Final Weight</label>
+                                    <input type="number" id="pred-fnlwgt" value="77516" required>
+                                </div>
+                                <div class="form-group" style="margin-bottom:0;">
+                                    <label>Capital Gain</label>
+                                    <input type="number" id="pred-capital-gain" value="2174" required>
+                                </div>
+                                <div class="form-group" style="margin-bottom:0;">
+                                    <label>Capital Loss</label>
+                                    <input type="number" id="pred-capital-loss" value="0" required>
+                                </div>
+                                <div class="form-group" style="margin-bottom:0;">
+                                    <label>Hours per Week</label>
+                                    <input type="number" id="pred-hours-per-week" value="40" required>
+                                </div>
+                                <div class="form-group" style="margin-bottom:0; grid-column: 1 / -1;">
+                                    <label>Native Country</label>
+                                    <input type="text" id="pred-native-country" value="United-States" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" style="margin-top:8px;">Run Prediction</button>
                      </form>
                      
-                     <div class="prediction-result" id="pred-result" style="display:none;">
-                        <div>
-                          <div style="font-size:12px; color:var(--text-sec); text-transform:uppercase; letter-spacing:0.05em;">Prediction</div>
-                          <div class="val" id="pred-output">-</div>
+                     <div id="pred-error" style="display:none; margin-top:16px; padding:12px 16px; border-left:4px solid var(--error); background:rgba(248,113,113,0.1); color:var(--error); font-size:13px; border-radius:0 4px 4px 0;"></div>
+                     
+                     <div class="prediction-result" id="pred-result" style="display:none; flex-direction:column; gap:16px; align-items:stretch;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:16px;">
+                          <div>
+                            <div style="font-size:12px; color:var(--text-sec); text-transform:uppercase; letter-spacing:0.05em;">Result</div>
+                            <div class="val" id="pred-output" style="color:var(--success); font-size:24px;">-</div>
+                          </div>
+                          <div style="text-align:right;">
+                            <div style="font-size:12px; color:var(--text-sec); text-transform:uppercase; letter-spacing:0.05em;">Latency</div>
+                            <div class="val" id="pred-latency" style="font-size:16px; font-weight:500;">-</div>
+                          </div>
                         </div>
-                        <div style="text-align:right;">
-                          <div style="font-size:12px; color:var(--text-sec); text-transform:uppercase; letter-spacing:0.05em;">Latency</div>
-                          <div class="val" id="pred-latency" style="font-size:16px; font-weight:500;">-</div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; font-size:13px;">
+                           <div><span style="color:var(--text-sec);">Model:</span> <span id="pred-res-model-name">-</span></div>
+                           <div style="text-align:right;"><span style="color:var(--text-sec);">Version:</span> <span id="pred-res-model-version">-</span></div>
+                           <div><span style="color:var(--text-sec);">Status:</span> <span style="color:var(--success);">200 OK</span></div>
+                           <div style="text-align:right;"><span style="color:var(--text-sec);">Time:</span> <span id="pred-res-timestamp">-</span></div>
                         </div>
                      </div>
                    </div>
@@ -962,10 +1031,20 @@
         
         const payload = {
             data: {
-                age: parseFloat(document.getElementById('pred-age').value),
-                income: parseFloat(document.getElementById('pred-income').value),
-                city: document.getElementById('pred-city').value,
-                student: document.getElementById('pred-student').value
+                "age": parseFloat(document.getElementById('pred-age').value),
+                "workclass": document.getElementById('pred-workclass').value,
+                "fnlwgt": parseFloat(document.getElementById('pred-fnlwgt').value),
+                "education": document.getElementById('pred-education').value,
+                "education-num": parseFloat(document.getElementById('pred-education-num').value),
+                "marital-status": document.getElementById('pred-marital-status').value,
+                "occupation": document.getElementById('pred-occupation').value,
+                "relationship": document.getElementById('pred-relationship').value,
+                "race": document.getElementById('pred-race').value,
+                "sex": document.getElementById('pred-sex').value,
+                "capital-gain": parseFloat(document.getElementById('pred-capital-gain').value),
+                "capital-loss": parseFloat(document.getElementById('pred-capital-loss').value),
+                "hours-per-week": parseFloat(document.getElementById('pred-hours-per-week').value),
+                "native-country": document.getElementById('pred-native-country').value
             }
         };
         
@@ -985,17 +1064,32 @@
             const end = performance.now();
             const lat = Math.round(end - start);
             
+            document.getElementById('pred-error').style.display = 'none';
+            document.getElementById('pred-result').style.display = 'none';
+
             if(res.ok) {
                 const data = await res.json();
                 document.getElementById('pred-result').style.display = 'flex';
                 document.getElementById('pred-output').innerText = (data.prediction !== undefined ? data.prediction : data.class_name) || "Completed";
                 document.getElementById('pred-latency').innerText = lat + ' ms';
+                document.getElementById('pred-res-model-name').innerText = document.getElementById('dep-model-name').innerText;
+                document.getElementById('pred-res-model-version').innerText = document.getElementById('dep-model-version').innerText;
+                document.getElementById('pred-res-timestamp').innerText = new Date().toLocaleTimeString();
                 setTimeout(fetchMetrics, 500);
             } else {
-                alert('Prediction failed: ' + res.status);
+                let errText = "Prediction failed: " + res.status;
+                try {
+                    const errData = await res.json();
+                    if(errData.detail) errText = errData.detail;
+                } catch(e) {}
+                const errBox = document.getElementById('pred-error');
+                errBox.innerText = errText;
+                errBox.style.display = 'block';
             }
         } catch(e) {
-            alert('Network error.');
+            const errBox = document.getElementById('pred-error');
+            errBox.innerText = 'Network error connecting to API.';
+            errBox.style.display = 'block';
         } finally {
             btn.innerText = 'Run Prediction';
             btn.disabled = false;

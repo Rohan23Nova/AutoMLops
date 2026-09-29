@@ -11,7 +11,7 @@ PROJECT_DIR = "/Users/rohankumar/Desktop/AutoMLOps_Project"
 if PROJECT_DIR not in sys.path:
     sys.path.insert(0, PROJECT_DIR)
 
-from main_pipeline import check_and_retrain
+
 
 
 def run_automlops_pipeline():
@@ -19,6 +19,7 @@ def run_automlops_pipeline():
 
     print("\n========== AUTOMLOPS PROJECT DIRECTORY ==========")
     print(os.getcwd())
+    from main_pipeline import check_and_retrain
 
     result = check_and_retrain(
         reference_path="data/processed/reference.csv",
